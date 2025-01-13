@@ -16,6 +16,15 @@ class ShowtimeRepository extends ServiceEntityRepository
         parent::__construct($registry, Showtime::class);
     }
 
+    public function findOneById(int $id): ?Showtime
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     //    /**
     //     * @return Showtime[] Returns an array of Showtime objects
     //     */

@@ -32,9 +32,16 @@ class Theater
     #[ORM\OrderBy(['row_' => 'ASC', 'column_' => 'ASC'])]
     private Collection $seats;
 
+    /**
+     * @var Collection<int, Showtime>
+     */
+    #[ORM\OneToMany(targetEntity: Showtime::class, mappedBy: 'theater')]
+    private Collection $showtimes;
+
     public function __construct()
     {
         $this->seats = new ArrayCollection();
+        $this->showtimes = new ArrayCollection();
     }
 
     #[ORM\PrePersist]
@@ -108,6 +115,36 @@ class Theater
             // set the owning side to null (unless already changed)
             if ($seat->getTheater() === $this) {
                 $seat->setTheater(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Showtime>
+     */
+    public function getShowtimes(): Collection
+    {
+        return $this->showtimes;
+    }
+
+    public function addShowtime(Showtime $showtime): static
+    {
+        if (!$this->showtimes->contains($showtime)) {
+            $this->showtimes->add($showtime);
+            $showtime->setTheater($this);
+        }
+
+        return $this;
+    }
+
+    public function removeShowtime(Showtime $showtime): static
+    {
+        if ($this->showtimes->removeElement($showtime)) {
+            // set the owning side to null (unless already changed)
+            if ($showtime->getTheater() === $this) {
+                $showtime->setTheater(null);
             }
         }
 

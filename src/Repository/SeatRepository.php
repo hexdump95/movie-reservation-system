@@ -16,6 +16,21 @@ class SeatRepository extends ServiceEntityRepository
         parent::__construct($registry, Seat::class);
     }
 
+    public function findByIdAndShowtimeIdAndCodeNotEmpty(int $id, int $showtimeId): ?Seat
+    {
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.theater', 't')
+            ->leftJoin('t.showtimes', 'sh')
+            ->andWhere('s.id = :id')
+            ->andWhere('s.code <> \'\'')
+            ->andWhere('sh.id = :showtimeId')
+            ->setParameter('id', $id)
+            ->setParameter('showtimeId', $showtimeId)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+    }
+
 //    /**
 //     * @return Seat[] Returns an array of Seat objects
 //     */

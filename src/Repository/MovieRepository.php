@@ -21,7 +21,7 @@ class MovieRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('m')
             ->leftJoin('m.showtimes', 's')
-            ->where('m.releaseDate >= :now or s.dateStart >= :now')
+            ->where('(m.releaseDate >= :now or s.dateStart >= :now) and m.deletedAt is null')
             ->setParameter('now', new \DateTime())
             ->getQuery()
             ->getResult();

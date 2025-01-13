@@ -29,7 +29,7 @@ class AuthController extends AbstractController
         $this->logger = $logger;
     }
 
-    #[Route('/register', name: 'auth.register', methods: ['POST'])]
+    #[Route('/register', name: 'register', methods: ['POST'])]
     public function register(Request $request): Response
     {
         if ('json' !== $request->getContentTypeFormat()) {
