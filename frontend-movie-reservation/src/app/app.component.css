@@ -1,0 +1,10 @@
+.main-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.inner-container {
+  flex: 1;
+  background: #2a0000;
+}
