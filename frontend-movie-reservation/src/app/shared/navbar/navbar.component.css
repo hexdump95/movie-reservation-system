@@ -3,6 +3,7 @@ mat-toolbar {
   top: 0;
   left: 0;
   height: 64px;
+  z-index: 1000;
 }
 
 a {

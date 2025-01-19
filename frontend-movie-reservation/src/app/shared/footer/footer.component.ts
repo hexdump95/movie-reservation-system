@@ -9,6 +9,6 @@ import {environment} from "../../../environments/environment";
   styleUrl: './footer.component.css'
 })
 export class FooterComponent {
-  pageTitle: string = environment.title;
+  pageTitle: string = environment.pageTitle;
   currentYear = new Date().getFullYear();
 }

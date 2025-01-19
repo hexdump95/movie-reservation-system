@@ -1,0 +1,26 @@
+.container {
+  display: flex;
+}
+
+.page-title {
+  font-family: "Dancing Script", cursive;
+  font-optical-sizing: auto;
+  color: #ffb300;
+  font-style: normal;
+}
+
+.square {
+  flex: 1;
+  margin-top: 25px;
+  background-color: #202020;
+  padding: 25px;
+  text-align: center;
+}
+
+button, mat-form-field {
+  width: 260px;
+}
+
+.link {
+  text-decoration: none;
+}

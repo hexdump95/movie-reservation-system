@@ -1,0 +1,45 @@
+<div class="container">
+  <div class="spacer"></div>
+  <div class="square">
+
+    <form [formGroup]="formLogin" (ngSubmit)="onSubmit()">
+      <h1 class="page-title">{{ pageTitle }}</h1>
+
+      <mat-form-field>
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="username" type="text" required>
+      </mat-form-field>
+      <br>
+
+      <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          formControlName="password"
+          [type]="hide ? 'password' : 'text'"
+          required>
+        <button tabindex="-1" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="hide">
+          <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+      </mat-form-field>
+      <br>
+      <button type="submit" mat-raised-button color="accent" disabled="{{loginSubmitted || formLogin.invalid}}">
+        Sign in
+      </button>
+    </form>
+
+  </div>
+  <div class="spacer"></div>
+</div>
+<br>
+<div class="container">
+  <div class="spacer"></div>
+  <div class="square">
+    New to <b><i>{{ pageTitle }}</i></b>?
+    <a [routerLink]="['/register']">
+      <button mat-stroked-button color="accent" class="link"><b>Sign up</b></button>
+    </a>
+  </div>
+  <div class="spacer"></div>
+</div>

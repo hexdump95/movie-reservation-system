@@ -1,3 +1,3 @@
 export const environment = {
-  title: 'movie-reservation',
+  pageTitle: 'movie-reservation',
 };
