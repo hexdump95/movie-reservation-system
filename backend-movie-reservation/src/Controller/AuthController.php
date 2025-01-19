@@ -49,4 +49,21 @@ class AuthController extends AbstractController
 
         return $this->json(['token' => $token]);
     }
+
+    #[Route('/validateToken', name: 'validateToken', methods: ['POST'])]
+    public function validateToken(Request $request): Response
+    {
+        try {
+            $header = $request->headers->get('Authorization');
+            if (empty($header)) {
+                throw new BadRequestException('Unauthorized');
+            }
+            $header = str_replace('Bearer ', '', $header);
+            $value = $this->authService->validateToken($header);
+            return $this->json(['isValid' => $value]);
+        } catch (\Exception) {
+            return $this->json(['isValid' => false]);
+        }
+    }
+
 }

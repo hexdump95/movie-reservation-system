@@ -10,6 +10,10 @@ security:
                 class: App\Entity\User
                 property: email
     firewalls:
+        validate_token:
+            pattern: ^/api/v1/auth/validateToken
+            security: false
+
         login:
             pattern: ^/api/v1/auth/login
             stateless: true
