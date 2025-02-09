@@ -6,6 +6,7 @@ class UpcomingMovieResponse
 {
     private ?int $id;
     private ?string $title;
+    private ?string $posterImage;
     private bool $hasShowtime;
 
     public function getId(): ?int
@@ -27,6 +28,17 @@ class UpcomingMovieResponse
     public function setTitle(string $title): static
     {
         $this->title = $title;
+        return $this;
+    }
+
+    public function getPosterImage(): ?string
+    {
+        return $this->posterImage;
+    }
+
+    public function setPosterImage(string $posterImage): static
+    {
+        $this->posterImage = $posterImage;
         return $this;
     }
 

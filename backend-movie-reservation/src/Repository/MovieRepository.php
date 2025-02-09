@@ -58,6 +58,7 @@ class MovieRepository extends ServiceEntityRepository
             $movieDto = (new UpcomingMovieResponse())
                 ->setId($movie->getId())
                 ->setTitle($movie->getTitle())
+                ->setPosterImage($movie->getPosterImage())
                 ->setHasShowtime($hasShowTime);
             $moviesDto[] = $movieDto;
         }
