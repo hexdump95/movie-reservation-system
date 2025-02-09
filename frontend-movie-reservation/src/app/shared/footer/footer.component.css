@@ -6,3 +6,12 @@
   align-items: end;
   bottom: 0;
 }
+
+.copyright {
+  background-color: black;
+  width: 100%;
+}
+
+.copyright p {
+  text-align: center;
+}
