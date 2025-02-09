@@ -4,6 +4,7 @@ import {Observable} from "rxjs";
 import {LoginRequest} from "./interfaces/login-request";
 import {ValidateTokenResponse} from "./interfaces/validate-token-response";
 import {LoginResponse} from "./interfaces/login-response";
+import {RegisterResponse} from "./interfaces/register-response";
 
 @Injectable({
   providedIn: 'root'
@@ -14,16 +15,28 @@ export class AuthService {
   constructor(private http: HttpClient) {
   }
 
+  register(user: { username: string; password: string }): Observable<RegisterResponse> {
+    return this.http.post<RegisterResponse>(`${this.apiUrl}/register`, user);
+  }
+
   login(user: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, user);
+  }
+
+  validateToken(): Observable<ValidateTokenResponse> {
+    return this.http.post<ValidateTokenResponse>(`${this.apiUrl}/validateToken`, {});
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('access_token');
   }
 
   setToken(token: string): void {
     localStorage.setItem('access_token', token);
   }
 
-  validateToken(): Observable<ValidateTokenResponse> {
-    return this.http.post<ValidateTokenResponse>(`${this.apiUrl}/validateToken`, {});
+  logout(): void {
+    localStorage.removeItem('access_token');
   }
 
 }
