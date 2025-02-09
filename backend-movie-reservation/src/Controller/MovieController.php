@@ -6,6 +6,7 @@ use App\Service\MovieService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -22,12 +23,13 @@ class MovieController extends AbstractController
     }
 
     #[Route('', name: 'getUpcomingMovies', methods: ['GET'])]
-    public function getUpcomingMovies(): Response
+    public function getUpcomingMovies(#[MapQueryParameter] int $page = 1): Response
     {
-        $moviesDto = $this->movieService->getUpcomingMovies();
+        $responseDto = $this->movieService->getUpcomingMovies($page);
         return new JsonResponse(
-            $this->serializer->normalize($moviesDto),
+            $this->serializer->normalize($responseDto),
             Response::HTTP_OK
         );
     }
+
 }

@@ -2,32 +2,23 @@
 
 namespace App\Service;
 
-use App\DTO\UpcomingMovieResponse;
 use App\Repository\MovieRepository;
+use Psr\Log\LoggerInterface;
 
 class MovieService
 {
     private MovieRepository $movieRepository;
+    private LoggerInterface $logger;
 
-    public function __construct(MovieRepository $movieRepository)
+    public function __construct(MovieRepository $movieRepository, LoggerInterface $logger)
     {
         $this->movieRepository = $movieRepository;
+        $this->logger = $logger;
     }
 
-    public function getUpcomingMovies(): array
+    public function getUpcomingMovies(int $page): array
     {
-
-        $movies = $this->movieRepository->findUpcomingMovies();
-
-        $moviesDto = [];
-        foreach ($movies as $movie) {
-            $movieDto = (new UpcomingMovieResponse())
-                ->setId($movie->getId())
-                ->setTitle($movie->getTitle())
-                ->setHasShowtime($movie->getShowtimes()->first()->getDateStart() > new \DateTime());
-            $moviesDto[] = $movieDto;
-        }
-        return $moviesDto;
+        return $this->movieRepository->findUpcomingMovies($page, 10);
     }
 
 }
