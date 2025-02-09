@@ -1,0 +1,55 @@
+<h1>Upcoming Movies</h1>
+@if (page) {
+  <h2>Page #{{ page.currentPage }}</h2>
+  <div class="movie-container">
+    @for (movie of page.data; track movie.id) {
+      <div class="movie-card"
+      >
+        @if (!movie.hasShowtime) {
+          <div class="coming-soon">
+            <h2>COMING SOON</h2>
+          </div>
+        }
+        <img src="{{movie.posterImage}}" alt="{{movie.title}}" class="poster-fit">
+        <div class="movie-title">
+          <h2>{{ movie.title }}</h2>
+        </div>
+      </div>
+    }
+  </div>
+  <div class="page-container">
+    <div class="page-button">
+      @if (page.hasPreviousPage) {
+        <button class="navigate-page"
+                [disabled]="loadingPage"
+                [ngStyle]="{'color': loadingPage ? 'grey' : 'var(--palette-color-primary)'}"
+                (click)="previousPage(); loadingPage = !loadingPage;"
+        >Previous
+        </button>
+      }
+    </div>
+    @if (page.totalPages != 1) {
+      @for (i of pageRange; track i) {
+        <div class="page-button">
+          <button class="navigate-page"
+                  [disabled]="loadingPage"
+                  [ngStyle]="{'color': loadingPage ? 'grey' : (i == page.currentPage ? 'var(--primary-text-color)' : 'var(--palette-color-primary)')}"
+                  (click)="goToPage(i); loadingPage = !loadingPage;"
+          >{{ i }}
+          </button>
+        </div>
+      }
+    }
+    @if (page.hasNextPage) {
+      <div class="page-button">
+        <button class="navigate-page"
+                [disabled]="loadingPage"
+                [ngStyle]="{'color': loadingPage ? 'grey' : 'var(--palette-color-primary)'}"
+                (click)="nextPage(); loadingPage = !loadingPage;"
+        >
+          Next
+        </button>
+      </div>
+    }
+  </div>
+}
