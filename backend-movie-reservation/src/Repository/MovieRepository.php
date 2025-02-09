@@ -24,7 +24,7 @@ class MovieRepository extends ServiceEntityRepository
                 'm.showtimes',
                 's',
                 'WITH',
-                's.dateStart = (SELECT MAX(s2.dateStart) FROM App\Entity\Showtime s2 WHERE s2.movie = m.id AND s2.dateStart >= :now)'
+                's.dateStart = (SELECT MIN(s2.dateStart) FROM App\Entity\Showtime s2 WHERE s2.movie = m.id AND s2.dateStart >= :now)'
             )
             ->where('(m.releaseDate >= :now or s.dateStart >= :now) and m.deletedAt is null')
             ->setParameter('now', new \DateTime())
@@ -38,11 +38,12 @@ class MovieRepository extends ServiceEntityRepository
                 'm.showtimes',
                 's',
                 'WITH',
-                's.dateStart = (SELECT MAX(s2.dateStart) FROM App\Entity\Showtime s2 WHERE s2.movie = m.id AND s2.dateStart >= :now)'
+                's.dateStart = (SELECT MIN(s2.dateStart) FROM App\Entity\Showtime s2 WHERE s2.movie = m.id AND s2.dateStart >= :now)'
             )
             ->where('(m.releaseDate >= :now or s.dateStart >= :now) and m.deletedAt is null')
             ->setParameter('now', new \DateTime())
-            ->orderBy('m.releaseDate', 'ASC')
+            ->orderBy('s.dateStart', 'ASC')
+            ->addOrderBy('m.releaseDate', 'DESC')
             ->setFirstResult($offset)
             ->setMaxResults($limit)
             ->getQuery()
