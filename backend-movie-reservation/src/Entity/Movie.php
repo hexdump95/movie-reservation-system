@@ -44,6 +44,10 @@ class Movie
     #[ORM\OrderBy(['dateStart' => 'DESC'])]
     private Collection $showtimes;
 
+    #[ORM\ManyToOne(inversedBy: 'movies')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Genre $genre = null;
+
     public function __construct()
     {
         $this->showtimes = new ArrayCollection();
@@ -164,6 +168,18 @@ class Movie
                 $showtime->setMovie(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getGenre(): ?Genre
+    {
+        return $this->genre;
+    }
+
+    public function setGenre(?Genre $genre): static
+    {
+        $this->genre = $genre;
 
         return $this;
     }

@@ -59,6 +59,7 @@ class MovieRepository extends ServiceEntityRepository
                 ->setId($movie->getId())
                 ->setTitle($movie->getTitle())
                 ->setPosterImage($movie->getPosterImage())
+                ->setGenreName($movie->getGenre()->getName())
                 ->setHasShowtime($hasShowTime);
             $moviesDto[] = $movieDto;
         }
