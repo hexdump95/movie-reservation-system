@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Exception\HttpServiceException;
+use App\Exception\ServiceException;
 use App\Service\MovieService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -35,11 +37,15 @@ class MovieController extends AbstractController
     #[Route('/{id}', name: 'getMovieDetail', methods: ['GET'])]
     public function getMovieDetail(int $id): Response
     {
-        $movieResponse = $this->movieService->getMovieDetail($id);
-        return new JsonResponse(
-            $this->serializer->normalize($movieResponse),
-            Response::HTTP_OK
-        );
+        try {
+            $movieResponse = $this->movieService->getMovieDetail($id);
+            return new JsonResponse(
+                $this->serializer->normalize($movieResponse),
+                Response::HTTP_OK
+            );
+        } catch (ServiceException $exception) {
+            throw new HttpServiceException($exception->getCode(), $exception->getMessage(), $exception->getDetails());
+        }
     }
 
 }

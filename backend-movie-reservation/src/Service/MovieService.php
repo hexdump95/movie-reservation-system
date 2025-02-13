@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\DTO\AvailableShowtimeResponse;
 use App\DTO\MovieDetailResponse;
+use App\Exception\ServiceException;
 use App\Repository\MovieRepository;
 use Psr\Log\LoggerInterface;
 
@@ -23,11 +24,14 @@ class MovieService
         return $this->movieRepository->findUpcomingMovies($page, 10);
     }
 
+    /**
+     * @throws ServiceException
+     */
     public function getMovieDetail(int $id): MovieDetailResponse
     {
         $movie = $this->movieRepository->getMovieDetail($id);
         if (!$movie) {
-            throw new \Exception("Movie not found"); // TODO: Throw another exception
+            throw new ServiceException(['Movie with id ' . $id . ' not found']);
         }
         $showtimesResponse = [];
         foreach ($movie->getShowtimes() as $showtime) {
