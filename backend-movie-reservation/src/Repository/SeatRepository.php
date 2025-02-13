@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Seat;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -14,6 +15,42 @@ class SeatRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Seat::class);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function findByShowtimeId(int $showtimeId): ?array
+    {
+        $query = "
+                select s.id,
+                s.column_,
+                s.row_,
+                s.code,
+                case when sq.id is null then false else true end occupied,
+                sh1.date_start,
+                th.number,
+                m.title
+                from seat s
+                left join theater th on th.id = s.theater_id
+                left join showtime sh1 on sh1.theater_id = th.id
+                left join movie m on m.id = sh1.movie_id
+                left join (
+                    select s2.id from seat s2
+                    left join ticket t2 on t2.seat_id = s2.id
+                    left join book b2 on b2.id = t2.book_id
+                    left join showtime sh2 on sh2.id = b2.showtime_id
+                    where
+                        sh2.id = :showtimeId
+                ) sq on sq.id = s.id
+                where
+                    sh1.id = :showtimeId
+                order by s.row_, s.column_;
+                ";
+        $statement = $this->getEntityManager()->getConnection()->prepare($query);
+        $statement->bindValue('showtimeId', $showtimeId);
+        $seats = $statement->executeQuery()->fetchAllAssociative();
+        return $seats == [] ? null : $seats;
     }
 
     public function findByIdAndShowtimeIdAndCodeNotEmpty(int $id, int $showtimeId): ?Seat
