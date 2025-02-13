@@ -41,12 +41,15 @@ class Movie
      * @var Collection<int, Showtime>
      */
     #[ORM\OneToMany(targetEntity: Showtime::class, mappedBy: 'movie', orphanRemoval: true)]
-    #[ORM\OrderBy(['dateStart' => 'DESC'])]
+    #[ORM\OrderBy(['dateStart' => 'ASC'])]
     private Collection $showtimes;
 
     #[ORM\ManyToOne(inversedBy: 'movies')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Genre $genre = null;
+
+    #[ORM\Column]
+    private ?int $year = null;
 
     public function __construct()
     {
@@ -180,6 +183,18 @@ class Movie
     public function setGenre(?Genre $genre): static
     {
         $this->genre = $genre;
+
+        return $this;
+    }
+
+    public function getYear(): ?int
+    {
+        return $this->year;
+    }
+
+    public function setYear(?int $year): static
+    {
+        $this->year = $year;
 
         return $this;
     }

@@ -32,4 +32,14 @@ class MovieController extends AbstractController
         );
     }
 
+    #[Route('/{id}', name: 'getMovieDetail', methods: ['GET'])]
+    public function getMovieDetail(int $id): Response
+    {
+        $movieResponse = $this->movieService->getMovieDetail($id);
+        return new JsonResponse(
+            $this->serializer->normalize($movieResponse),
+            Response::HTTP_OK
+        );
+    }
+
 }

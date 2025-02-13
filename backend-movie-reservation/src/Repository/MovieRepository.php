@@ -59,7 +59,6 @@ class MovieRepository extends ServiceEntityRepository
                 ->setId($movie->getId())
                 ->setTitle($movie->getTitle())
                 ->setPosterImage($movie->getPosterImage())
-                ->setGenreName($movie->getGenre()->getName())
                 ->setHasShowtime($hasShowTime);
             $moviesDto[] = $movieDto;
         }
@@ -72,6 +71,15 @@ class MovieRepository extends ServiceEntityRepository
             'hasNextPage' => $currentPage < $totalPages,
             'data' => $moviesDto,
         ];
+    }
+
+    public function getMovieDetail(int $id) {
+        return $this->createQueryBuilder('m')
+            ->join('m.showtimes', 's')
+            ->where('m.id = :id and m.deletedAt is null')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     //    /**
