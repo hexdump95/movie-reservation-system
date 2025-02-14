@@ -54,7 +54,7 @@ class MovieRepository extends ServiceEntityRepository
 
         $moviesDto = [];
         foreach ($movies as $movie) {
-            $hasShowTime = !$movie->getShowtimes()->isEmpty() && $movie->getShowtimes()->first()->getDateStart() > new \DateTime();
+            $hasShowTime = !$movie->getShowtimes()->isEmpty() && $movie->getShowtimes()->last()->getDateStart() > new \DateTime();
             $movieDto = (new UpcomingMovieResponse())
                 ->setId($movie->getId())
                 ->setTitle($movie->getTitle())
