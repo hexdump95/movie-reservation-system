@@ -16,6 +16,7 @@ class MovieRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Movie::class);
     }
+
     public function findUpcomingMovies($currentPage, $limit): array
     {
         $count = $this->createQueryBuilder('m')
@@ -54,7 +55,7 @@ class MovieRepository extends ServiceEntityRepository
 
         $moviesDto = [];
         foreach ($movies as $movie) {
-            $hasShowTime = !$movie->getShowtimes()->isEmpty() && $movie->getShowtimes()->last()->getDateStart() > new \DateTime();
+            $hasShowTime = !$movie->getShowtimes()->isEmpty() && $movie->getShowtimes()->last()->getDateStart() >= new \DateTime();
             $movieDto = (new UpcomingMovieResponse())
                 ->setId($movie->getId())
                 ->setTitle($movie->getTitle())
@@ -73,7 +74,8 @@ class MovieRepository extends ServiceEntityRepository
         ];
     }
 
-    public function getMovieDetail(int $id) {
+    public function getMovieDetail(int $id)
+    {
         return $this->createQueryBuilder('m')
             ->join('m.showtimes', 's')
             ->where('m.id = :id and m.deletedAt is null')

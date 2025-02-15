@@ -4,6 +4,8 @@ namespace App\Service;
 
 use App\DTO\BookSeatResponse;
 use App\DTO\ReservedSeat;
+use App\DTO\ShowtimeResponse;
+use App\DTO\ShowtimeSeatResponse;
 use App\Entity\Book;
 use App\Entity\Ticket;
 use App\Exception\ServiceException;
@@ -11,6 +13,7 @@ use App\Repository\BookRepository;
 use App\Repository\SeatRepository;
 use App\Repository\ShowtimeRepository;
 use App\Repository\UserRepository;
+use Doctrine\DBAL\Exception;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class BookService
@@ -28,6 +31,35 @@ class BookService
         $this->bookRepository = $bookRepository;
         $this->userRepository = $userRepository;
         $this->seatRepository = $seatRepository;
+    }
+
+    /**
+     * @throws ServiceException
+     * @throws Exception
+     */
+    public function getShowtimeWithSeats(int $id): ShowtimeResponse
+    {
+        $seats = $this->seatRepository->findByShowtimeId($id);
+        if ($seats == null) {
+            throw new ServiceException(['Showtime with id ' . $id . ' not found']);
+        }
+
+        $seatsResponse = [];
+        foreach ($seats as $seat) {
+            $seatResponse = (new ShowtimeSeatResponse())
+                ->setId($seat['id'])
+                ->setColumn($seat['column_'])
+                ->setRow($seat['row_'])
+                ->setCode($seat['code'])
+                ->setIsOccupied($seat['occupied']);
+            $seatsResponse[$seat['row_']-1][] = $seatResponse;
+        }
+
+        return (new ShowtimeResponse())
+            ->setMovieTitle($seats[0]['title'])
+            ->setTheaterNumber($seats[0]['number'])
+            ->setDateStart($seats[0]['date_start'])
+            ->setSeats($seatsResponse);
     }
 
     /**
