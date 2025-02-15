@@ -8,4 +8,9 @@ export const routes: Routes = [
   {path: 'login', component: LoginComponent},
   {path: '', component: HomeComponent, canActivate: [authGuard],},
   {path: 'movies', component: MovieComponent, canActivate: [authGuard],},
+  {
+    path: 'book',
+    loadChildren: () => import(`./book/book.routes`),
+    canActivate: [authGuard],
+  },
 ];
