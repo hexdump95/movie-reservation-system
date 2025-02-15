@@ -1,0 +1,55 @@
+<h1>Book a seat!</h1>
+@if (!showtime) {
+  <app-loader></app-loader>
+} @else {
+  <p><b>Movie: </b>{{ showtime.movieTitle }}, {{ showtime.dateStart | date: 'full' }}{{
+      (showtime.dateStart | date: 'Y-MM-dd') === currentDate.toISOString().split("T")[0] ?
+        ' (Today)' : ''
+    }}, Theater #{{ showtime.theaterNumber }}</p>
+
+  <div class="theater">
+    <div class="screen">SCREEN</div>
+    @for (row of showtime.seats; track row) {
+      <div class="seat-container">
+        @for (seat of row; track seat.id) {
+          @if (seat.code == '') {
+            <div class="seat"
+                 [style.background-color]="'unset'"
+                 [style.width.px]="seatLength"
+                 [style.height.px]="seatLength"
+            >
+            </div>
+          } @else {
+            <div
+              class="seat hover"
+              [style.width.px]="seatLength"
+              [style.height.px]="seatLength"
+              [ngStyle]="{
+              'background-color': seat.isOccupied ?
+                            '#831c1c' : seat.isSelected ?
+                                    '#DAB326' : '#378f1f'
+
+            }"
+              (click)="selectSeat(seat.row, seat.column)"
+            >
+            </div>
+          }
+        }
+      </div>
+    }
+  </div>
+  @if (selectedSeats > 0) {
+    <div style="margin: 40px;">
+      <hr>
+      <div style="display: flex; flex-direction: row; justify-content: space-around">
+        <div><b>Tickets</b> (1.00 USD/Ticket)</div>
+        <div><b>{{ selectedSeats }}</b></div>
+      </div>
+      <hr>
+
+      <div style="display: flex; justify-content: flex-end;">
+        <button mat-raised-button color="primary" (click)="payTickets()">Pay</button>
+      </div>
+    </div>
+  }
+}
