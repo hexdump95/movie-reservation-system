@@ -4,12 +4,14 @@ server:
   command: "php public/index.php"
   env:
     - APP_RUNTIME: Baldinof\RoadRunnerBundle\Runtime\Runtime
+    - XDEBUG_SESSION: 1
 
 http:
   address: 0.0.0.0:8080
   middleware: [ "static", "gzip" ]
   pool:
     debug: true
+    num_workers: 2
   uploads:
     forbid: [ ".php", ".exe", ".bat" ]
   static:
