@@ -1,8 +1,19 @@
 <mat-toolbar>
   <a href="/"><span class="page-title">movie-reservation</span></a>
+  @if (isLoggedIn) {
+    <span class="spacer"></span>
+    <a [routerLink]="['/movies']">
+      <b>Movies</b>
+    </a>
+    <span class="spacer"></span>
+  }
   <span class="spacer"></span>
-  <a [routerLink]="['/login']">
-    <button mat-stroked-button color="primary"><b>Sign in</b></button>
-  </a>
+  @if (isLoggedIn) {
+    <p>{{ user }}</p>
+  } @else {
+    <a [routerLink]="['/login']">
+      <button mat-stroked-button color="primary"><b>Sign in</b></button>
+    </a>
+  }
 </mat-toolbar>
 <div class="block"></div>

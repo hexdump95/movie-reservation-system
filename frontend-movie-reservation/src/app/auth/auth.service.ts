@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {Observable} from "rxjs";
+import {BehaviorSubject, Observable, tap} from "rxjs";
 import {LoginRequest} from "./interfaces/login-request";
 import {ValidateTokenResponse} from "./interfaces/validate-token-response";
 import {LoginResponse} from "./interfaces/login-response";
@@ -12,6 +12,11 @@ import {jwtDecode} from "jwt-decode";
 })
 export class AuthService {
   private apiUrl = 'http://localhost:8080/api/v1/auth';
+  private isLoggedInSubject = new BehaviorSubject<boolean>(false);
+  private userSubject = new BehaviorSubject<any>(null);
+
+  isLoggedIn$ = this.isLoggedInSubject.asObservable();
+  user$ = this.userSubject.asObservable();
 
   constructor(private http: HttpClient) {
   }
@@ -21,7 +26,13 @@ export class AuthService {
   }
 
   login(user: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, user);
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, user)
+      .pipe(
+        tap(res => {
+          this.userSubject.next(jwtDecode<any>(res.token).sub);
+          this.isLoggedInSubject.next(true);
+        })
+      );
   }
 
   validateToken(): Observable<ValidateTokenResponse> {
@@ -46,6 +57,14 @@ export class AuthService {
       return jwtDecode<any>(token).sub;
     }
     return '';
+  }
+
+  checkAuthStatus() {
+      const user = this.getUserSub();
+      if(user) {
+        this.userSubject.next(user);
+        this.isLoggedInSubject.next(true);
+      }
   }
 
 }
