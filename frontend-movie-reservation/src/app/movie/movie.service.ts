@@ -15,4 +15,8 @@ export class MovieService {
   getUpcomingMovies(page: number): Observable<PageMovieResponse> {
     return this.http.get<PageMovieResponse>(`${this.apiUrl}?page=${page}`);
   }
+
+  getMovieDetail(movieId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${movieId}`);
+  }
 }

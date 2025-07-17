@@ -2,12 +2,14 @@ import {Component} from '@angular/core';
 import {MovieService} from "./movie.service";
 import {PageMovieResponse} from "./page-movie-response";
 import {NgStyle} from "@angular/common";
+import {MovieDetailComponent} from "./movie-detail/movie-detail.component";
 
 @Component({
   selector: 'app-movie',
   standalone: true,
   imports: [
     NgStyle,
+    MovieDetailComponent,
   ],
   templateUrl: './movie.component.html',
   styleUrl: './movie.component.css'
@@ -23,6 +25,8 @@ export class MovieComponent {
   minPageNumber = 1;
   maxPageNumber = 10;
   pageRange: number[] = [];
+  isModalOpen: boolean = false;
+  selectedMovieId!: number;
 
   updatePageRange(): void {
     if (this.currentPage >= 6) {
@@ -81,4 +85,12 @@ export class MovieComponent {
       });
   }
 
+  openMovieDetail(movieId: number) {
+    this.selectedMovieId = movieId;
+    this.isModalOpen = true;
+  }
+
+  closeModal() {
+    this.isModalOpen = false;
+  }
 }

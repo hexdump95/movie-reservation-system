@@ -4,6 +4,7 @@
   <div class="movie-container">
     @for (movie of page.data; track movie.id) {
       <div class="movie-card"
+           (click)="movie.hasShowtime ? openMovieDetail(movie.id) : null;"
       >
         @if (!movie.hasShowtime) {
           <div class="coming-soon">
@@ -52,4 +53,8 @@
       </div>
     }
   </div>
+}
+
+@if (isModalOpen) {
+  <app-movie-detail [movieId]="selectedMovieId" (closeModal)="closeModal()"></app-movie-detail>
 }

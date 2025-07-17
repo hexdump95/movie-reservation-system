@@ -1,0 +1,16 @@
+<div class="modal">
+  <div class="modal-content">
+    @if (movie) {
+      <h2>{{ movie.title }}</h2>
+      <p>{{ movie.description }}</p>
+      @for (showtime of movie.showtimes; track showtime.id) {
+        <a [routerLink]="['/book/showtimes/' + showtime.id]" style="color: white;">
+          <p>{{(showtime.date | date: 'Y-MM-dd') === currentDate.toISOString().split("T")[0] ?
+            'Today' : showtime.date | date: 'dd/MM/yy'
+            }} - {{showtime.date | date: 'HH:mm'}} - Theater {{showtime.theaterNumber}}</p>
+        </a>
+      }
+    }
+    <button (click)="close()">Close</button>
+  </div>
+</div>
