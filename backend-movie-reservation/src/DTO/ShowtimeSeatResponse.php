@@ -9,6 +9,7 @@ class ShowtimeSeatResponse
     private ?int $row;
     private ?string $code;
     private ?bool $isOccupied;
+    private ?bool $isSelected;
 
     public function getId(): ?int
     {
@@ -62,6 +63,17 @@ class ShowtimeSeatResponse
     public function setIsOccupied(?bool $isOccupied): static
     {
         $this->isOccupied = $isOccupied;
+        return $this;
+    }
+
+    public function getIsSelected(): ?bool
+    {
+        return $this->isSelected;
+    }
+
+    public function setIsSelected(?bool $isSelected): static
+    {
+        $this->isSelected = $isSelected;
         return $this;
     }
 

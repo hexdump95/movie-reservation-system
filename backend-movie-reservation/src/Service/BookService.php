@@ -14,7 +14,9 @@ use App\Repository\SeatRepository;
 use App\Repository\ShowtimeRepository;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\Exception;
+use Predis\Client;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class BookService
 {
@@ -23,14 +25,18 @@ class BookService
     private BookRepository $bookRepository;
     private UserRepository $userRepository;
     private SeatRepository $seatRepository;
+    private Client $redis;
+    private CentrifugoService $centrifugoService;
 
-    public function __construct(Security $security, ShowtimeRepository $showtimeRepository, BookRepository $bookRepository, UserRepository $userRepository, SeatRepository $seatRepository)
+    public function __construct(Security $security, ShowtimeRepository $showtimeRepository, BookRepository $bookRepository, UserRepository $userRepository, SeatRepository $seatRepository, Client $redis, CentrifugoService $centrifugoService)
     {
         $this->security = $security;
         $this->showtimeRepository = $showtimeRepository;
         $this->bookRepository = $bookRepository;
         $this->userRepository = $userRepository;
         $this->seatRepository = $seatRepository;
+        $this->redis = $redis;
+        $this->centrifugoService = $centrifugoService;
     }
 
     /**
@@ -51,15 +57,85 @@ class BookService
                 ->setColumn($seat['column_'])
                 ->setRow($seat['row_'])
                 ->setCode($seat['code'])
-                ->setIsOccupied($seat['occupied']);
-            $seatsResponse[$seat['row_']-1][] = $seatResponse;
+                ->setIsOccupied($seat['occupied'])
+                ->setIsSelected(false);
+            $seatsResponse[$seat['row_'] - 1][] = $seatResponse;
         }
 
-        return (new ShowtimeResponse())
+        $showtime = (new ShowtimeResponse())
             ->setMovieTitle($seats[0]['title'])
             ->setTheaterNumber($seats[0]['number'])
             ->setDateStart($seats[0]['date_start'])
             ->setSeats($seatsResponse);
+
+        $seatPattern = 'showtime_' . $id . ':seat_*';
+        $redisKeys = $this->redis->keys($seatPattern);
+
+        $temporaryReservations = [];
+        foreach ($redisKeys as $key) {
+            if ($this->redis->exists($key)) {
+                preg_match('/seat_(\d+)$/', $key, $matches);
+                $temporaryReservations[] = [
+                    'userId' => $this->redis->hget($key, 'userId'),
+                    'seatId' => (int)($matches[1] ?? 0)
+                ];
+            }
+        }
+
+        $seats = $showtime->getSeats();
+
+        foreach ($temporaryReservations as $tempSeat) {
+            array_map(function ($row) use ($tempSeat) {
+                return array_map(function ($seat) use ($tempSeat) {
+                    if ($seat->getId() === $tempSeat['seatId']) {
+                        $seat->setIsOccupied($tempSeat['userId'] !== $this->security->getUser()->getUserIdentifier());
+                        $seat->setIsSelected($tempSeat['userId'] === $this->security->getUser()->getUserIdentifier());
+                    }
+                    return $seat;
+                }, $row);
+            }, $seats);
+        }
+
+        $showtime->setSeats($seats);
+        return $showtime;
+    }
+
+    /**
+     * @throws ServiceException
+     */
+    public function temporaryBookSeat(int $showtimeId, int $seatId): bool
+    {
+        $pathSeat = 'showtime_' . $showtimeId . ':' . 'seat_' . $seatId;
+        $username = $this->security->getUser()->getUserIdentifier();
+
+        if ($this->redis->hget($pathSeat, 'userId') == $username) {
+            $this->redis->hdel($pathSeat, ['userId']);
+            try {
+                $this->centrifugoService->changeTemporarySeatStatus($showtimeId, false, $seatId, $username);
+                return true;
+            } catch (TransportExceptionInterface) {
+                throw new ServiceException(['Temporary book seat failed']);
+            }
+        }
+
+        $this->redis->hsetnx(
+            $pathSeat,
+            'userId',
+            $username,
+        );
+
+        if ($this->redis->hget($pathSeat, 'userId') != $username) {
+            return false;
+        }
+
+        $this->redis->expire($pathSeat, 60*6); // TODO: move expirytime to a variable
+        try {
+            $this->centrifugoService->changeTemporarySeatStatus($showtimeId, true, $seatId, $username);
+            return true;
+        } catch (TransportExceptionInterface) {
+            throw new ServiceException(['Temporary book seat failed']);
+        }
+
     }
 
     /**

@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Exception\HttpServiceException;
 use App\Exception\ServiceException;
 use App\Service\BookService;
-use Doctrine\DBAL\Exception;
+use App\Service\CentrifugoService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,28 +18,53 @@ class BookController extends AbstractController
 {
     private BookService $bookService;
     private SerializerInterface $serializer;
+    private CentrifugoService $centrifugoService;
 
-    public function __construct(BookService $bookService, SerializerInterface $serializer)
+    public function __construct(BookService $bookService, SerializerInterface $serializer, CentrifugoService $centrifugoService)
     {
         $this->bookService = $bookService;
         $this->serializer = $serializer;
+        $this->centrifugoService = $centrifugoService;
     }
 
-    /**
-     * @throws Exception
-     */
     #[Route('/showtimes/{id}', name: 'getShowtime')]
     public function getShowtimeWithSeats($id): JsonResponse
     {
         try {
-            $seats = $this->bookService->getShowtimeWithSeats($id);
+            $showtime = $this->bookService->getShowtimeWithSeats($id);
 
             return new JsonResponse(
-                $this->serializer->normalize($seats),
+                $this->serializer->normalize($showtime),
                 Response::HTTP_OK
             );
-        } catch (ServiceException $exception) {
-            throw new HttpServiceException($exception->getCode(), $exception->getMessage(), $exception->getDetails());
+        } catch (ServiceException $e) {
+            throw new HttpServiceException($e->getCode(), $e->getMessage(), $e->getDetails());
+        } catch (\Doctrine\DBAL\Exception $e) { // TODO: Use a different exception
+            throw new HttpServiceException($e->getCode(), $e->getMessage(), []);
+        }
+    }
+
+    #[Route('/getCentrifugoToken/{showtimeId}', name: 'getCentrifugoToken', methods: ['GET'])]
+    public function getCentrifugoToken(int $showtimeId): JsonResponse
+    {
+        $userId = $this->getUser()->getUserIdentifier();
+        $token = $this->centrifugoService->generateConnectionToken($userId);
+
+        return new JsonResponse(
+            [
+                'ws_token' => $token,
+                'channel' => "showtime_$showtimeId",
+            ]);
+    }
+
+    #[Route('/showtime/{showtimeId}/seats/{seatId}', name: 'updateSeatStatus', methods: ['PUT'])]
+    public function temporaryBookSeat(int $showtimeId, int $seatId): JsonResponse
+    {
+        try {
+            $bookSeat = $this->bookService->temporaryBookSeat($showtimeId, $seatId);
+            return new JsonResponse(['success' => $bookSeat]);
+        } catch (ServiceException $e) {
+            throw new HttpServiceException($e->getCode(), $e->getMessage(), $e->getDetails());
         }
     }
 
