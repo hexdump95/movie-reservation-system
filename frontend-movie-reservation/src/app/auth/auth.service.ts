@@ -40,7 +40,7 @@ export class AuthService {
     localStorage.removeItem('access_token');
   }
 
-  getUserId(): string {
+  getUserSub(): string {
     const token = this.getToken();
     if (token) {
       return jwtDecode<any>(token).sub;

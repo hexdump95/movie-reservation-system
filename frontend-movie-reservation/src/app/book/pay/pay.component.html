@@ -1,0 +1,12 @@
+<form [formGroup]="formPay" (ngSubmit)="onSubmit()">
+
+  <mat-form-field>
+    <mat-label>Card Number</mat-label>
+    <input matInput formControlName="cardNumber" type="text" required>
+  </mat-form-field>
+  <br>
+
+  <button type="submit" mat-raised-button color="accent" disabled="{{paySubmitted || formPay.invalid}}">
+    Pay
+  </button>
+</form>

@@ -17,10 +17,19 @@ export class BookService {
   }
 
   temporaryBookSeat(showtimeId: number, seatId: number): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/showtime/${showtimeId}/seats/${seatId}`, {});
+    return this.http.put<any>(`${this.apiUrl}/showtimes/${showtimeId}/seats/${seatId}`, {});
   }
 
   getCentrifugoToken(showtimeId: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/getCentrifugoToken/${showtimeId}`);
   }
+
+  holdSeats(showtimeId: number): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/showtimes/${showtimeId}/hold`, {});
+  }
+
+  paySeats(showtimeId: number): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/showtimes/${showtimeId}/pay`, {});
+  }
+
 }

@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {BookService} from "../book.service";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {DatePipe, NgStyle} from "@angular/common";
 import {LoaderComponent} from "../../shared/loader/loader.component";
 import {MatButton} from "@angular/material/button";
@@ -38,6 +38,7 @@ export class ShowtimeComponent {
               private route: ActivatedRoute,
               private websocketService: WebSocketService,
               private authService: AuthService,
+              private router: Router,
   ) {
   }
 
@@ -81,7 +82,7 @@ export class ShowtimeComponent {
   subscribeToSeatUpdates(): void {
     this.seatUpdateSubscription = this.websocketService.seatUpdates$.subscribe({
       next: (update: SeatUpdate | null) => {
-        if (update && update.userId !== this.authService.getUserId()) {
+        if (update && update.userEmail !== this.authService.getUserSub()) {
           const seat = this.showtime.seats
             .flatMap(x => x)
             .find(x => x.id === update.seatId)!;
@@ -118,11 +119,10 @@ export class ShowtimeComponent {
   }
 
   payTickets() {
-    let ids = this.showtime.seats
-      .flatMap(x => x)
-      .filter(x => x.isSelected)
-      .map(x => ({id: x.id}));
-    console.log(ids);
+    this.bookService.holdSeats(this.showtimeId)
+      .subscribe(_ => {
+        void this.router.navigate([`/book/showtimes/${this.showtimeId}/pay`]);
+      })
   }
 
 }
