@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  centrifugo:
+    container_name: centrifugo
+    image: centrifugo/centrifugo:v6.0
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./centrifugo/:/centrifugo/
+    command: centrifugo -c config.json
+
