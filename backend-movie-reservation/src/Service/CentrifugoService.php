@@ -22,7 +22,7 @@ class CentrifugoService
     {
         $payload = [
             'sub' => $userId,
-            'exp' => time() + 20*60,
+            'exp' => time() + 20 * 60,
         ];
         $secretKey = '';
         try {
@@ -35,7 +35,7 @@ class CentrifugoService
     /**
      * @throws TransportExceptionInterface
      */
-    public function changeTemporarySeatStatus(int $showtimeId, bool $isReserved, int $seatId, string $username): bool
+    public function changeTemporarySeatStatus(int $showtimeId, bool $isReserved, int $seatId, string $userEmail): bool
     {
         try {
             $centrifugoUrl = $this->params->get('centrifugo_url');
@@ -53,7 +53,7 @@ class CentrifugoService
                         'data' => [
                             'isReserved' => $isReserved,
                             'seatId' => $seatId,
-                            'userId' => $username,
+                            'userEmail' => $userEmail,
                             'timestamp' => time()
                         ]
                     ],

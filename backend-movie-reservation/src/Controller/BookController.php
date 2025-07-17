@@ -57,7 +57,7 @@ class BookController extends AbstractController
             ]);
     }
 
-    #[Route('/showtime/{showtimeId}/seats/{seatId}', name: 'updateSeatStatus', methods: ['PUT'])]
+    #[Route('/showtimes/{showtimeId}/seats/{seatId}', name: 'updateSeatStatus', methods: ['PUT'])]
     public function temporaryBookSeat(int $showtimeId, int $seatId): JsonResponse
     {
         try {
@@ -68,13 +68,22 @@ class BookController extends AbstractController
         }
     }
 
-    #[Route('/showtimes/{id}', name: 'bookSeats', requirements: ['id' => '\d+'], methods: ['POST'])]
-    public function bookSeats(int $id, Request $request): JsonResponse
+    #[Route('/showtimes/{showtimeId}/hold', name: 'holdSeats', methods: ['POST'])]
+    public function holdSeats(int $showtimeId): JsonResponse
     {
         try {
-            $bookRequests = $this->serializer->deserialize($request->getContent(), 'App\DTO\BookSeatRequest[]', 'json');
+            $seats = $this->bookService->holdSeats($showtimeId);
+            return new JsonResponse(['seats' => $seats]);
+        } catch (ServiceException $e) {
+            throw new HttpServiceException($e->getCode(), $e->getMessage(), $e->getDetails());
+        }
+    }
 
-            $bookResponse = $this->bookService->bookSeats($id, $bookRequests);
+    #[Route('/showtimes/{showtimeId}/pay', name: 'paySeats', requirements: ['showtimeId' => '\d+'], methods: ['POST'])]
+    public function paySeats(int $showtimeId): JsonResponse
+    {
+        try {
+            $bookResponse = $this->bookService->buySeats($showtimeId);
             return new JsonResponse(
                 $this->serializer->normalize($bookResponse),
                 Response::HTTP_OK
