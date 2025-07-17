@@ -15,4 +15,12 @@ export class BookService {
   getSeatsByShowtimeId(showtimeId: number): Observable<ShowtimeResponse> {
     return this.http.get<ShowtimeResponse>(`${this.apiUrl}/showtimes/${showtimeId}`);
   }
+
+  temporaryBookSeat(showtimeId: number, seatId: number): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/showtime/${showtimeId}/seats/${seatId}`, {});
+  }
+
+  getCentrifugoToken(showtimeId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/getCentrifugoToken/${showtimeId}`);
+  }
 }

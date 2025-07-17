@@ -5,6 +5,7 @@ import {LoginRequest} from "./interfaces/login-request";
 import {ValidateTokenResponse} from "./interfaces/validate-token-response";
 import {LoginResponse} from "./interfaces/login-response";
 import {RegisterResponse} from "./interfaces/register-response";
+import {jwtDecode} from "jwt-decode";
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +38,14 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('access_token');
+  }
+
+  getUserId(): string {
+    const token = this.getToken();
+    if (token) {
+      return jwtDecode<any>(token).sub;
+    }
+    return '';
   }
 
 }
