@@ -7,9 +7,12 @@ use App\DTO\ReservedSeat;
 use App\DTO\ShowtimeResponse;
 use App\DTO\ShowtimeSeatResponse;
 use App\Entity\Book;
+use App\Entity\StatusBook;
 use App\Entity\Ticket;
+use App\Enum\BookStatusEnum;
 use App\Exception\ServiceException;
 use App\Repository\BookRepository;
+use App\Repository\BookStatusRepository;
 use App\Repository\SeatRepository;
 use App\Repository\ShowtimeRepository;
 use App\Repository\UserRepository;
@@ -27,8 +30,9 @@ class BookService
     private SeatRepository $seatRepository;
     private Client $redis;
     private CentrifugoService $centrifugoService;
+    private BookStatusRepository $bookStatusRepository;
 
-    public function __construct(Security $security, ShowtimeRepository $showtimeRepository, BookRepository $bookRepository, UserRepository $userRepository, SeatRepository $seatRepository, Client $redis, CentrifugoService $centrifugoService)
+    public function __construct(Security $security, ShowtimeRepository $showtimeRepository, BookRepository $bookRepository, UserRepository $userRepository, SeatRepository $seatRepository, Client $redis, CentrifugoService $centrifugoService, BookStatusRepository $bookStatusRepository)
     {
         $this->security = $security;
         $this->showtimeRepository = $showtimeRepository;
@@ -37,6 +41,7 @@ class BookService
         $this->seatRepository = $seatRepository;
         $this->redis = $redis;
         $this->centrifugoService = $centrifugoService;
+        $this->bookStatusRepository = $bookStatusRepository;
     }
 
     /**
@@ -200,9 +205,15 @@ class BookService
 
         $user = $this->userRepository->findByEmail($userEmail);
 
+        $bookStatusPaid = $this->bookStatusRepository->findByName(BookStatusEnum::PAID->name);
+
+        $statusBook = (new StatusBook())
+            ->setBookStatus($bookStatusPaid);
+
         $book = (new Book())
             ->setUser($user)
             ->setShowtime($showtime);
+        $book->addStatusBook($statusBook);
 
         $errors = [];
         foreach ($bookRequestIds as $bookRequestId) {
@@ -215,9 +226,14 @@ class BookService
                 continue;
             }
 
-            $exists = $seat->getTickets()->exists(function ($key, $value) use ($showtime) {
-                return $value->getBook()->getShowtime() === $showtime;
+            $exists = $seat->getTickets()->exists(function ($key, $ticket) use ($showtime) {
+                $book = $ticket->getBook();
+                $lastStatusBook = $book->getStatusBook()->filter(function ($statusBook) {
+                    return $statusBook->getDateTo() === null;
+                })->last();
+                return $book->getShowtime() === $showtime && $lastStatusBook->getBookStatus()->getName() === BookStatusEnum::PAID->name;
             });
+
             if ($exists) {
                 $errors[] = "Seat with id=" . $bookRequestId . " is already occupied";
                 continue;

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Seat;
+use App\Enum\BookStatusEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
@@ -39,9 +40,13 @@ class SeatRepository extends ServiceEntityRepository
                     select s2.id from seat s2
                     left join ticket t2 on t2.seat_id = s2.id
                     left join book b2 on b2.id = t2.book_id
+                    left join status_book sb2 on sb2.book_id = b2.id
+                    left join book_status bs2 on bs2.id = sb2.book_status_id
                     left join showtime sh2 on sh2.id = b2.showtime_id
                     where
                         sh2.id = :showtimeId
+                        and sb2.date_to is null
+                        and bs2.name = :paidSeat
                 ) sq on sq.id = s.id
                 where
                     sh1.id = :showtimeId
@@ -49,6 +54,7 @@ class SeatRepository extends ServiceEntityRepository
                 ";
         $statement = $this->getEntityManager()->getConnection()->prepare($query);
         $statement->bindValue('showtimeId', $showtimeId);
+        $statement->bindValue('paidSeat', BookStatusEnum::PAID->name);
         $seats = $statement->executeQuery()->fetchAllAssociative();
         return $seats == [] ? null : $seats;
     }

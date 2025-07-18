@@ -36,9 +36,16 @@ class Book
     #[ORM\JoinColumn(nullable: false)]
     private ?Showtime $showtime = null;
 
+    /**
+     * @var Collection<int, StatusBook>
+     */
+    #[ORM\OneToMany(targetEntity: StatusBook::class, mappedBy: 'book',  cascade: ['remove', 'persist', 'refresh', 'detach'], orphanRemoval: true)]
+    private Collection $statusBook;
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
+        $this->statusBook = new ArrayCollection();
     }
 
     #[ORM\PrePersist]
@@ -128,6 +135,36 @@ class Book
     public function setShowtime(?Showtime $showtime): static
     {
         $this->showtime = $showtime;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, StatusBook>
+     */
+    public function getStatusBook(): Collection
+    {
+        return $this->statusBook;
+    }
+
+    public function addStatusBook(StatusBook $statusBook): static
+    {
+        if (!$this->statusBook->contains($statusBook)) {
+            $this->statusBook->add($statusBook);
+            $statusBook->setBook($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStatusBook(StatusBook $statusBook): static
+    {
+        if ($this->statusBook->removeElement($statusBook)) {
+            // set the owning side to null (unless already changed)
+            if ($statusBook->getBook() === $this) {
+                $statusBook->setBook(null);
+            }
+        }
 
         return $this;
     }
