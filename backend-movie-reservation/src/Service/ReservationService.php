@@ -6,19 +6,23 @@ use App\DTO\ReservationDetailResponse;
 use App\DTO\ReservationResponse;
 use App\DTO\ReservationSeatDetailResponse;
 use App\Entity\Book;
-use App\Entity\BookStatus;
+use App\Entity\StatusBook;
+use App\Enum\BookStatusEnum;
 use App\Repository\BookRepository;
+use App\Repository\BookStatusRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class ReservationService
 {
-    private BookRepository $bookRepository;
     private Security $security;
+    private BookRepository $bookRepository;
+    private BookStatusRepository $bookStatusRepository;
 
-    public function __construct(BookRepository $bookRepository, Security $security)
+    public function __construct(Security $security, BookRepository $bookRepository, BookStatusRepository $bookStatusRepository)
     {
-        $this->bookRepository = $bookRepository;
         $this->security = $security;
+        $this->bookRepository = $bookRepository;
+        $this->bookStatusRepository = $bookStatusRepository;
     }
 
     public function getReservations(): array
@@ -31,7 +35,7 @@ class ReservationService
             $bookId = $book->getId();
             $bookTotalPrice = $book->getTotalPrice();
             $movieTitle = $book->getShowtime()->getMovie()->getTitle();
-            $bookStatus = $this->getLastBookStatus($book)->getName();
+            $bookStatus = $this->getLastStatusBook($book)->getBookStatus()->getName();
             $bookCreatedAt = $book->getCreatedAt();
             $showtimeDateStart = $book->getShowtime()->getDateStart();
             $theaterNumber = $book->getShowtime()->getTheater()->getNumber();
@@ -59,7 +63,7 @@ class ReservationService
         $book = $this->bookRepository->findOneByIdAndUserEmail($bookId, $userEmail);
 
         $bookTotalPrice = $book->getTotalPrice();
-        $bookStatus = $this->getLastBookStatus($book)->getName();
+        $bookStatus = $this->getLastStatusBook($book)->getBookStatus()->getName();
         $bookCreatedAt = $book->getCreatedAt();
         $showtimeDateStart = $book->getShowtime()->getDateStart();
         $movieTitle = $book->getShowtime()->getMovie()->getTitle();
@@ -85,11 +89,33 @@ class ReservationService
             ->setSeats($seats);
     }
 
-    private function getLastBookStatus(Book $book): ?BookStatus
+    public function cancelReservation($bookId): bool
+    {
+        $userEmail = $this->security->getUser()->getUserIdentifier();
+        $book = $this->bookRepository->findOneByIdAndUserEmail($bookId, $userEmail);
+
+        $lastBookStatus = $this->getLastStatusBook($book);
+        if ($lastBookStatus->getBookStatus()->getName() !== BookStatusEnum::PAID->name)
+            return false;
+
+        $lastBookStatus->setDateTo(new \DateTimeImmutable());
+
+        $bookStatusCanceled = $this->bookStatusRepository->findByName(BookStatusEnum::CANCELED->name);
+
+        $newStatusBook = (new StatusBook())
+            ->setBookStatus($bookStatusCanceled)
+            ->setDateFrom(new \DateTimeImmutable());
+
+        $book->addStatusBook($newStatusBook);
+
+        return $this->bookRepository->save($book) !== null;
+    }
+
+    private function getLastStatusBook(Book $book): ?StatusBook
     {
         return $book->getStatusBook()->filter(function ($statusBook) {
             return $statusBook->getDateTo() === null;
-        })->last()->getBookStatus();
+        })->last();
     }
 
 }

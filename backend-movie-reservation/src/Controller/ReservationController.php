@@ -40,4 +40,15 @@ class ReservationController extends AbstractController
             Response::HTTP_OK
         );
     }
+
+    #[Route('/{bookId}/cancel', name: 'cancelReservation', methods: ['PATCH'])]
+    public function cancelReservation(int $bookId): JsonResponse
+    {
+        $reservationCanceled = $this->reservationService->cancelReservation($bookId);
+        return new JsonResponse(
+            ['success' => $reservationCanceled],
+            Response::HTTP_OK
+        );
+    }
+
 }
