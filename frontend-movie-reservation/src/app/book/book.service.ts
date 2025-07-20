@@ -7,7 +7,7 @@ import {ShowtimeResponse} from "./showtime/showtime-response";
   providedIn: 'root'
 })
 export class BookService {
-  private apiUrl = 'http://localhost:8080/api/v1/book';
+  private apiUrl = 'http://localhost:8080/api/v1/books';
 
   constructor(private http: HttpClient) {
   }
@@ -30,6 +30,18 @@ export class BookService {
 
   paySeats(showtimeId: number): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/showtimes/${showtimeId}/pay`, {});
+  }
+
+  getReservations(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}`);
+  }
+
+  getOneReservation(bookId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${bookId}`);
+  }
+
+  cancelReservation(bookId: number): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/${bookId}/cancel`, {});
   }
 
 }
