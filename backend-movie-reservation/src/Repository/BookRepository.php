@@ -23,6 +23,29 @@ class BookRepository extends ServiceEntityRepository
         return $entity;
     }
 
+    public function findAllByUserEmail(string $email): array
+    {
+        return $this->createQueryBuilder('b')
+            ->join('b.user_', 'u')
+            ->where('u.email = :email')
+            ->setParameter('email', $email)
+            ->orderBy('b.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findOneByIdAndUserEmail(int $id, string $email): ?Book
+    {
+        return $this->createQueryBuilder('b')
+            ->join('b.user_', 'u')
+            ->where('b.id = :id')
+            ->andWhere('u.email = :email')
+            ->setParameter('id', $id)
+            ->setParameter('email', $email)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     //    /**
     //     * @return Book[] Returns an array of Book objects
     //     */

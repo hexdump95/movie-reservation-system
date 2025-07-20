@@ -46,8 +46,8 @@ class BookController extends AbstractController
     #[Route('/getCentrifugoToken/{showtimeId}', name: 'getCentrifugoToken', methods: ['GET'])]
     public function getCentrifugoToken(int $showtimeId): JsonResponse
     {
-        $userId = $this->getUser()->getUserIdentifier();
-        $token = $this->centrifugoService->generateConnectionToken($userId);
+        $userEmail = $this->getUser()->getUserIdentifier();
+        $token = $this->centrifugoService->generateConnectionToken($userEmail);
 
         return new JsonResponse(
             [

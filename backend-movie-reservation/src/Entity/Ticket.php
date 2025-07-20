@@ -22,7 +22,7 @@ class Ticket
 
     #[ORM\ManyToOne(inversedBy: 'tickets')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?seat $seat = null;
+    private ?Seat $seat = null;
 
     public function getId(): ?int
     {
@@ -53,12 +53,12 @@ class Ticket
         return $this;
     }
 
-    public function getSeat(): ?seat
+    public function getSeat(): ?Seat
     {
         return $this->seat;
     }
 
-    public function setSeat(?seat $seat): static
+    public function setSeat(?Seat $seat): static
     {
         $this->seat = $seat;
 

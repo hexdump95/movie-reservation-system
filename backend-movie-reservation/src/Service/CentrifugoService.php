@@ -18,16 +18,16 @@ class CentrifugoService
     {
     }
 
-    public function generateConnectionToken(string $userId): string
+    public function generateConnectionToken(string $userEmail): string
     {
         $payload = [
-            'sub' => $userId,
+            'sub' => $userEmail,
             'exp' => time() + 20 * 60,
         ];
         $secretKey = '';
         try {
             $secretKey = $this->params->get('centrifugo_client_token_key');
-        } catch (\Exception|ContainerExceptionInterface $e) {
+        } catch (\Exception|ContainerExceptionInterface) {
         }
         return JWT::encode($payload, $secretKey, 'HS256');
     }
