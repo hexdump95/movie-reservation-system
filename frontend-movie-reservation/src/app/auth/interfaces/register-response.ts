@@ -1,3 +1,3 @@
 export interface RegisterResponse {
-  token: string;
+  access_token: string;
 }

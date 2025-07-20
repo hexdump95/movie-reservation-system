@@ -18,6 +18,7 @@ import {AuthService} from "../../auth/auth.service";
 export class NavbarComponent {
   isLoggedIn = false;
   user: any = null;
+  userRoles: string[] = [];
 
   constructor(
     private authService: AuthService,
@@ -32,6 +33,10 @@ export class NavbarComponent {
 
     this.authService.user$.subscribe(user => {
       this.user = user;
+    });
+
+    this.authService.userRoles$.subscribe(userRoles => {
+      this.userRoles = userRoles;
     });
   }
 }

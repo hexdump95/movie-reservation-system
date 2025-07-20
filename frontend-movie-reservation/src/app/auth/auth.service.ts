@@ -14,9 +14,11 @@ export class AuthService {
   private apiUrl = 'http://localhost:8080/api/v1/auth';
   private isLoggedInSubject = new BehaviorSubject<boolean>(false);
   private userSubject = new BehaviorSubject<any>(null);
+  private userRolesSubject = new BehaviorSubject<string[]>([]);
 
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
   user$ = this.userSubject.asObservable();
+  userRoles$ = this.userRolesSubject.asObservable();
 
   constructor(private http: HttpClient) {
   }
@@ -29,7 +31,7 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, user)
       .pipe(
         tap(res => {
-          this.userSubject.next(jwtDecode<any>(res.token).sub);
+          this.userSubject.next(jwtDecode<any>(res.access_token).sub);
           this.isLoggedInSubject.next(true);
         })
       );
@@ -52,19 +54,36 @@ export class AuthService {
   }
 
   getUserSub(): string {
-    const token = this.getToken();
-    if (token) {
-      return jwtDecode<any>(token).sub;
-    }
+    this.validateToken().subscribe(
+      res => {
+        if (res.isValid) {
+          const token = this.getToken();
+          if (token) {
+            return jwtDecode<any>(token).sub;
+          }
+        }
+      }
+    );
     return '';
   }
 
   checkAuthStatus() {
-      const user = this.getUserSub();
-      if(user) {
-        this.userSubject.next(user);
-        this.isLoggedInSubject.next(true);
-      }
+    this.validateToken().subscribe(
+      res => {
+        if (res.isValid) {
+          const token = this.getToken();
+          if (token) {
+            const decoded = jwtDecode<any>(token);
+            this.userSubject.next(decoded.sub);
+            this.isLoggedInSubject.next(true);
+            this.userRolesSubject.next(decoded.roles);
+          } else {
+            this.userSubject.next(null);
+            this.isLoggedInSubject.next(false);
+            this.userRolesSubject.next([]);
+          }
+        }
+      });
   }
 
 }

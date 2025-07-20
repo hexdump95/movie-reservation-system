@@ -62,7 +62,7 @@ export class LoginComponent {
     this.authService.login(user).subscribe(
       {
         next: res => {
-          let authHeader = res.token;
+          let authHeader = res.access_token;
           if (authHeader.length > 0) {
             this.authService.setToken(authHeader);
           }
