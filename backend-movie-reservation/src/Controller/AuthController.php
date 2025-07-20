@@ -6,7 +6,9 @@ use App\DTO\RegisterRequest;
 use App\Service\AuthService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -20,13 +22,15 @@ class AuthController extends AbstractController
     private SerializerInterface $serializer;
     private ValidatorInterface $validator;
     private LoggerInterface $logger;
+    private int $jwtExpiration;
 
-    public function __construct(AuthService $authService, SerializerInterface $serializer, ValidatorInterface $validator, LoggerInterface $logger)
+    public function __construct(AuthService $authService, SerializerInterface $serializer, ValidatorInterface $validator, LoggerInterface $logger, ContainerBagInterface $containerBag)
     {
         $this->authService = $authService;
         $this->serializer = $serializer;
         $this->validator = $validator;
         $this->logger = $logger;
+        $this->jwtExpiration = $containerBag->get('jwt_expiration');
     }
 
     #[Route('/register', name: 'register', methods: ['POST'])]
@@ -45,9 +49,17 @@ class AuthController extends AbstractController
             throw new BadRequestException($errorsString);
         }
 
-        $token = $this->authService->register($registerRequest);
+        $user = $this->authService->register($registerRequest);
+        if ($user === null) {
+            return new JsonResponse([], Response::HTTP_BAD_REQUEST);
+        }
+        $token = $this->authService->generateToken($user);
 
-        return $this->json(['token' => $token]);
+        return $this->json([
+            'access_token' => $token,
+            'expires_in' => $this->jwtExpiration,
+            'token_type' => 'Bearer',
+        ]);
     }
 
     #[Route('/validateToken', name: 'validateToken', methods: ['POST'])]
@@ -59,10 +71,10 @@ class AuthController extends AbstractController
                 throw new BadRequestException('Unauthorized');
             }
             $header = str_replace('Bearer ', '', $header);
-            $value = $this->authService->validateToken($header);
-            return $this->json(['isValid' => $value]);
+            $isTokenValid = $this->authService->isTokenValid($header);
+            return new JsonResponse(['isValid' => $isTokenValid]);
         } catch (\Exception) {
-            return $this->json(['isValid' => false]);
+            return new JsonResponse(['isValid' => false]);
         }
     }
 

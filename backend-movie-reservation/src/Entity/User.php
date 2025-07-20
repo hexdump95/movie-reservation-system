@@ -67,13 +67,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**
+     * @return list<string>
      * @see UserInterface
      *
-     * @return list<string>
      */
     public function getRoles(): array
     {
@@ -173,6 +173,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    public function getPermissions(): array
+    {
+        $userRoles = $this->getUserRoles();
+        $permissions = [];
+        foreach ($userRoles as $userRole) {
+            $role = $userRole->getRole();
+            $rolePermissions = $role->getRolePermissions();
+            foreach ($rolePermissions as $rolePermission) {
+                $permission = $rolePermission->getPermission();
+                $permissions[$permission->getName()] = true;
+            }
+        }
+        return array_keys($permissions);
     }
 
 }

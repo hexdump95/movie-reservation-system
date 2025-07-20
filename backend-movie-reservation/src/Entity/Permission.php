@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\RoleRepository;
+use App\Repository\PermissionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: RoleRepository::class)]
-class Role
+#[ORM\Entity(repositoryClass: PermissionRepository::class)]
+class Permission
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -21,7 +21,7 @@ class Role
     /**
      * @var Collection<int, RolePermission>
      */
-    #[ORM\OneToMany(targetEntity: RolePermission::class, mappedBy: 'role', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: RolePermission::class, mappedBy: 'permission')]
     private Collection $rolePermissions;
 
     public function __construct()
@@ -58,7 +58,7 @@ class Role
     {
         if (!$this->rolePermissions->contains($rolePermission)) {
             $this->rolePermissions->add($rolePermission);
-            $rolePermission->setRole($this);
+            $rolePermission->setPermission($this);
         }
 
         return $this;
@@ -68,8 +68,8 @@ class Role
     {
         if ($this->rolePermissions->removeElement($rolePermission)) {
             // set the owning side to null (unless already changed)
-            if ($rolePermission->getRole() === $this) {
-                $rolePermission->setRole(null);
+            if ($rolePermission->getPermission() === $this) {
+                $rolePermission->setPermission(null);
             }
         }
 

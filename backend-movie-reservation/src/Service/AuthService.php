@@ -30,10 +30,9 @@ class AuthService
         $this->tokenManager = $tokenManager;
         $this->jwsProvider = $jwsProvider;
     }
-
-    public function register(RegisterRequest $request): ?string
+    public function register(RegisterRequest $request): ?User
     {
-        if ($this->userRepository->findByEmail($request->getUsername()) !== null) {
+        if ($this->userRepository->existsByEmail($request->getUsername())) {
             return null; // user exists, throw an exception
         }
 
@@ -55,21 +54,20 @@ class AuthService
             $request->getPassword()
         );
         $user->setPasswordHash($hashedPassword);
-        $this->userRepository->save($user);
-
-        $jwtUser = new JWTUser($user->getEmail(), $user->getRoles());
-
-        return $this->tokenManager->create($jwtUser);
+        return $this->userRepository->save($user);
     }
 
-    public function validateToken(string $token): bool
+    public function generateToken($user): string
+    {
+        $jwtUser = new JWTUser($user->getEmail(), $user->getRoles());
+
+        return $this->tokenManager->createFromPayload($jwtUser, ['permissions' => $user->getPermissions()]);
+    }
+
+    public function isTokenValid(string $token): bool
     {
         $loadedJws = $this->jwsProvider->load($token);
-        if ($loadedJws->isExpired() || $loadedJws->isInvalid() || !$loadedJws->isVerified()) {
-            return false;
-        } else {
-            return true;
-        }
+        return (!$loadedJws->isExpired() && !$loadedJws->isInvalid() && $loadedJws->isVerified());
     }
 
 }

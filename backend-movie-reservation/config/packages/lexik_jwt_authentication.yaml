@@ -3,3 +3,4 @@ lexik_jwt_authentication:
     encoder:
         signature_algorithm: HS256
     user_id_claim: sub
+    token_ttl: '%env(resolve:JWT_EXPIRATION)%'

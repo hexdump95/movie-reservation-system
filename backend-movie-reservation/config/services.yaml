@@ -7,8 +7,22 @@ parameters:
     centrifugo_client_token_key: '%env(CENTRIFUGO_CLIENT_TOKEN_KEY)%'
     centrifugo_httpapi_key: '%env(CENTRIFUGO_HTTPAPI_KEY)%'
     centrifugo_url: '%env(CENTRIFUGO_URL)%'
+    jwt_expiration: '%env(JWT_EXPIRATION)%'
 
 services:
+    App\Security\JwtUserProvider: ~
+    acme_api.event.jwt_created_listener:
+        class: App\EventListener\JWTCreatedListener
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
+    acme_api.event.jwt_decoded_listener:
+        class: App\EventListener\JWTDecodedListener
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_decoded, method: onJWTDecoded }
+    acme_api.event.authentication_success_listener:
+        class: App\EventListener\JWTAuthenticationSuccessListener
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccessResponse }
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.

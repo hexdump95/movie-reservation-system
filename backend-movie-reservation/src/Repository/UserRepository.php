@@ -48,6 +48,17 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getOneOrNullResult();
     }
 
+    public function existsByEmail(string $email): bool {
+        $entity = $this->createQueryBuilder('u')
+            ->where('u.email = :email')
+            ->setParameter('email', $email)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return $entity !== null;
+    }
+
     //    /**
     //     * @return User[] Returns an array of User objects
     //     */
