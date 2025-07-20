@@ -4,9 +4,9 @@ namespace App\Controller;
 
 use App\DTO\RegisterRequest;
 use App\Service\AuthService;
+use App\Service\JWTService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,18 +19,18 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class AuthController extends AbstractController
 {
     private AuthService $authService;
+    private JWTService $jwtService;
     private SerializerInterface $serializer;
     private ValidatorInterface $validator;
     private LoggerInterface $logger;
-    private int $jwtExpiration;
 
-    public function __construct(AuthService $authService, SerializerInterface $serializer, ValidatorInterface $validator, LoggerInterface $logger, ContainerBagInterface $containerBag)
+    public function __construct(AuthService $authService, JWTService $jwtService, SerializerInterface $serializer, ValidatorInterface $validator, LoggerInterface $logger)
     {
         $this->authService = $authService;
+        $this->jwtService = $jwtService;
         $this->serializer = $serializer;
         $this->validator = $validator;
         $this->logger = $logger;
-        $this->jwtExpiration = $containerBag->get('jwt_expiration');
     }
 
     #[Route('/register', name: 'register', methods: ['POST'])]
@@ -53,11 +53,12 @@ class AuthController extends AbstractController
         if ($user === null) {
             return new JsonResponse([], Response::HTTP_BAD_REQUEST);
         }
-        $token = $this->authService->generateToken($user);
+        $token = $this->jwtService->generateToken($user);
+        $jwtExpiration = $this->jwtService->getJwtExpiration();
 
         return $this->json([
             'access_token' => $token,
-            'expires_in' => $this->jwtExpiration,
+            'expires_in' => $jwtExpiration,
             'token_type' => 'Bearer',
         ]);
     }
@@ -71,7 +72,7 @@ class AuthController extends AbstractController
                 throw new BadRequestException('Unauthorized');
             }
             $header = str_replace('Bearer ', '', $header);
-            $isTokenValid = $this->authService->isTokenValid($header);
+            $isTokenValid = $this->jwtService->isTokenValid($header);
             return new JsonResponse(['isValid' => $isTokenValid]);
         } catch (\Exception) {
             return new JsonResponse(['isValid' => false]);

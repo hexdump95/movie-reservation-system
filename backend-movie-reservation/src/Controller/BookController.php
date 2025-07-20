@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/api/v1/book')]
+#[Route('/api/v1/books')]
 class BookController extends AbstractController
 {
     private BookService $bookService;
@@ -91,4 +91,35 @@ class BookController extends AbstractController
             throw new HttpServiceException($exception->getCode(), $exception->getMessage(), $exception->getDetails());
         }
     }
+
+    #[Route('', name: 'getReservations', methods: ['GET'])]
+    public function getReservations(): JsonResponse
+    {
+        $reservations = $this->bookService->getReservations();
+        return new JsonResponse(
+            $this->serializer->normalize($reservations),
+            Response::HTTP_OK
+        );
+    }
+
+    #[Route('/{bookId}', name: 'getReservation', methods: ['GET'])]
+    public function getReservation(int $bookId): JsonResponse
+    {
+        $reservations = $this->bookService->getReservationById($bookId);
+        return new JsonResponse(
+            $this->serializer->normalize($reservations),
+            Response::HTTP_OK
+        );
+    }
+
+    #[Route('/{bookId}/cancel', name: 'cancelReservation', methods: ['PATCH'])]
+    public function cancelReservation(int $bookId): JsonResponse
+    {
+        $reservationCanceled = $this->bookService->cancelReservation($bookId);
+        return new JsonResponse(
+            ['success' => $reservationCanceled],
+            Response::HTTP_OK
+        );
+    }
+
 }
