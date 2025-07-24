@@ -1,1 +1,59 @@
-<p>book works!</p>
+@if (page) {
+  @for (book of page.data; track book.bookId) {
+    <div class="card">
+      <div class="book-info" [routerLink]="['./', book.bookId]">
+        <h2>{{ book.movieTitle }}</h2>
+        <p><b>Theater #{{ book.theaterNumber }}</b></p>
+        <p><b>Movie starts at: </b>{{ book.showtimeDateStart | date: 'Y-MM-dd' }}</p>
+        <h3 [ngStyle]="{'color': book.bookStatus === 'PAID' ?
+                                'green' : book.bookStatus === 'CANCELED' ?
+                                          'yellow' : 'white'}">
+          <b>Status: </b>{{ book.bookStatus | titlecase }}</h3>
+        <p><b>Tickets bought at: </b>{{ book.bookCreatedAt | date : 'Y-MM-dd' }}</p>
+        <p><b>Seats: </b> {{ book.totalSeats }} (Total price: {{ book.bookTotalPrice | currency }})</p>
+      </div>
+      <div class="book-buttons">
+        @if (book.bookStatus === 'PAID') {
+          <button mat-stroked-button color="warn" (click)="openCancelDialog(book.bookId)">Cancel reservation
+          </button>
+        }
+      </div>
+      <br>
+    </div>
+  }
+  <div class="page-container">
+    <div class="page-button">
+      @if (page.hasPreviousPage) {
+        <button class="navigate-page"
+                [disabled]="loadingPage"
+                [ngStyle]="{'color': loadingPage ? 'grey' : 'var(--palette-color-primary)'}"
+                (click)="previousPage(); loadingPage = !loadingPage;"
+        >Previous
+        </button>
+      }
+    </div>
+    @if (page.totalPages != 1) {
+      @for (i of pageRange; track i) {
+        <div class="page-button">
+          <button class="navigate-page"
+                  [disabled]="loadingPage"
+                  [ngStyle]="{'color': loadingPage ? 'grey' : (i == page.currentPage ? 'var(--primary-text-color)' : 'var(--palette-color-primary)')}"
+                  (click)="goToPage(i); loadingPage = !loadingPage;"
+          >{{ i }}
+          </button>
+        </div>
+      }
+    }
+    @if (page.hasNextPage) {
+      <div class="page-button">
+        <button class="navigate-page"
+                [disabled]="loadingPage"
+                [ngStyle]="{'color': loadingPage ? 'grey' : 'var(--palette-color-primary)'}"
+                (click)="nextPage(); loadingPage = !loadingPage;"
+        >
+          Next
+        </button>
+      </div>
+    }
+  </div>
+}

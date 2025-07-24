@@ -1,0 +1,48 @@
+.card {
+  border: 1px solid gray;
+  /*background-color: black;*/
+  color: white;
+  width: 50%;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.book-info {
+  padding: 15px;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+}
+
+.book-info:hover {
+  cursor: pointer;
+  background-color: black;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.page-button {
+  width: 66px;
+  text-align: center;
+  justify-items: center;
+  align-items: center;
+}
+
+.navigate-page:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+button {
+  border: none;
+  outline: none;
+  background: none;
+  font-size: inherit;
+}

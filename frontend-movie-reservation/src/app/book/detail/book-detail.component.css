@@ -1,0 +1,20 @@
+.seat-table {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+}
+
+.seat-table-bold {
+  display: flex;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.seat-table-item {
+  display: flex;
+  margin-bottom: 4px;
+}
+
+.seat-table-content {
+  flex: 1;
+}

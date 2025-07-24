@@ -2,6 +2,8 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {ShowtimeResponse} from "./showtime/showtime-response";
+import {BookDetailResponse} from "./detail/book-detail-response";
+import {PageBookResponse} from "./book-response";
 
 @Injectable({
   providedIn: 'root'
@@ -32,16 +34,16 @@ export class BookService {
     return this.http.post<any>(`${this.apiUrl}/showtimes/${showtimeId}/pay`, {});
   }
 
-  getReservations(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}`);
+  getReservations(page: number): Observable<PageBookResponse> {
+    return this.http.get<PageBookResponse>(`${this.apiUrl}?page=${page}`);
   }
 
-  getOneReservation(bookId: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${bookId}`);
+  getOneReservation(bookId: number): Observable<BookDetailResponse> {
+    return this.http.get<BookDetailResponse>(`${this.apiUrl}/${bookId}`);
   }
 
   cancelReservation(bookId: number): Observable<any> {
-    return this.http.patch<any>(`${this.apiUrl}/${bookId}/cancel`, {});
+    return this.http.post<any>(`${this.apiUrl}/${bookId}/cancel`, null);
   }
 
 }

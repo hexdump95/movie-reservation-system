@@ -1,0 +1,25 @@
+@if (!book) {
+  <app-loader></app-loader>
+} @else {
+  <h1>{{ book.movieTitle }}</h1>
+  <h2><b>Status: </b>{{ book.bookStatus | titlecase }}</h2>
+  <p><b>Tickets bought on: </b>{{ book.bookCreatedAt | date: 'full' }}</p>
+  <p><b>Movie starts on: </b>{{ book.showtimeDateStart | date: 'full' }}</p>
+  <p><b>Theater #</b>{{ book.theaterNumber }}</p>
+  <div class="seat-table">
+    <div class="seat-table-bold">
+      <div class="seat-table-content">Seat</div>
+      <div class="seat-table-content">Price</div>
+    </div>
+    @for (seat of book.seats; track $index) {
+      <div class="seat-table-item">
+        <div class="seat-table-content">{{ seat.seatCode }}</div>
+        <div class="seat-table-content">{{ seat.price | currency }}</div>
+      </div>
+    }
+    <div class="seat-table-bold">
+      <div class="seat-table-content">Total price</div>
+      <div class="seat-table-content">{{ book.bookTotalPrice | currency }}</div>
+    </div>
+  </div>
+}
