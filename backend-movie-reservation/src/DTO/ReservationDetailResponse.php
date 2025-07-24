@@ -4,7 +4,6 @@ namespace App\DTO;
 
 class ReservationDetailResponse
 {
-    private int $bookId;
     private float $bookTotalPrice;
     private string $bookStatus;
     private \DateTimeInterface $bookCreatedAt;
@@ -12,17 +11,6 @@ class ReservationDetailResponse
     private string $movieTitle;
     private int $theaterNumber;
     private array $seats = [];
-
-    public function getBookId(): int
-    {
-        return $this->bookId;
-    }
-
-    public function setBookId(int $bookId): self
-    {
-        $this->bookId = $bookId;
-        return $this;
-    }
 
     public function getBookTotalPrice(): float
     {

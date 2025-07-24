@@ -9,6 +9,7 @@ use App\Service\CentrifugoService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -93,9 +94,9 @@ class BookController extends AbstractController
     }
 
     #[Route('', name: 'getReservations', methods: ['GET'])]
-    public function getReservations(): JsonResponse
+    public function getReservations(#[MapQueryParameter] int $page = 1): JsonResponse
     {
-        $reservations = $this->bookService->getReservations();
+        $reservations = $this->bookService->getReservations($page);
         return new JsonResponse(
             $this->serializer->normalize($reservations),
             Response::HTTP_OK
@@ -112,7 +113,7 @@ class BookController extends AbstractController
         );
     }
 
-    #[Route('/{bookId}/cancel', name: 'cancelReservation', methods: ['PATCH'])]
+    #[Route('/{bookId}/cancel', name: 'cancelReservation', methods: ['POST'])]
     public function cancelReservation(int $bookId): JsonResponse
     {
         $reservationCanceled = $this->bookService->cancelReservation($bookId);

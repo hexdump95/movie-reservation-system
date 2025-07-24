@@ -274,36 +274,10 @@ class BookService
     }
 
 
-    public function getReservations(): array
+    public function getReservations(int $page): array
     {
         $userEmail = $this->security->getUser()->getUserIdentifier();
-        $reservations = $this->bookRepository->findAllByUserEmail($userEmail);
-
-        $reservationsResponse = [];
-        foreach ($reservations as $book) {
-            $bookId = $book->getId();
-            $bookTotalPrice = $book->getTotalPrice();
-            $movieTitle = $book->getShowtime()->getMovie()->getTitle();
-            $bookStatus = $this->getLastStatusBook($book)->getBookStatus()->getName();
-            $bookCreatedAt = $book->getCreatedAt();
-            $showtimeDateStart = $book->getShowtime()->getDateStart();
-            $theaterNumber = $book->getShowtime()->getTheater()->getNumber();
-            $totalSeats = $book->getTickets()->count();
-
-            $reservationResponse = (new ReservationResponse())
-                ->setBookId($bookId)
-                ->setBookTotalPrice($bookTotalPrice)
-                ->setMovieTitle($movieTitle)
-                ->setBookStatus($bookStatus)
-                ->setBookCreatedAt($bookCreatedAt)
-                ->setShowtimeDateStart($showtimeDateStart)
-                ->setTheaterNumber($theaterNumber)
-                ->setTotalSeats($totalSeats);
-
-            $reservationsResponse[] = $reservationResponse;
-        }
-
-        return $reservationsResponse;
+        return $this->bookRepository->findAllByUserEmail($userEmail, $page, 15);
     }
 
     public function getReservationById($bookId): ReservationDetailResponse
@@ -328,7 +302,6 @@ class BookService
         }
 
         return (new ReservationDetailResponse())
-            ->setBookId($bookId)
             ->setBookTotalPrice($bookTotalPrice)
             ->setBookStatus($bookStatus)
             ->setBookCreatedAt($bookCreatedAt)
@@ -342,6 +315,10 @@ class BookService
     {
         $userEmail = $this->security->getUser()->getUserIdentifier();
         $book = $this->bookRepository->findOneByIdAndUserEmail($bookId, $userEmail);
+
+        if ($this->isPastShowtime($book)) {
+            return false;
+        }
 
         $lastBookStatus = $this->getLastStatusBook($book);
         if ($lastBookStatus->getBookStatus()->getName() !== BookStatusEnum::PAID->name)
@@ -365,6 +342,11 @@ class BookService
         return $book->getStatusBook()->filter(function ($statusBook) {
             return $statusBook->getDateTo() === null;
         })->last();
+    }
+
+    private function isPastShowtime(Book $book): bool
+    {
+        return $book->getShowtime()->getDateStart() < new \DateTime();
     }
 
 }
