@@ -1,0 +1,29 @@
+@if (!usersAndRoles) {
+  <app-loader></app-loader>
+} @else {
+  <div class="table-container">
+    <table>
+      <tr>
+        <th rowspan="2">Users</th>
+          <th [attr.colspan]="usersAndRoles.roles.length">Roles</th>
+      </tr>
+      <tr>
+        @for (role of usersAndRoles.roles; track $index) {
+          <th>{{ role }}</th>
+        }
+      </tr>
+      @for (user of usersAndRoles.users; track $index) {
+        <tr>
+          <td>{{ user.email }}</td>
+          @for (role of usersAndRoles.roles; track $index) {
+            @if (user.roles.includes(role)) {
+              <td><input type="checkbox" [checked]="true"  [disabled]="checkboxesDisabled" (click)="addDeleteRole(user.id, role)"/></td>
+            } @else {
+              <td><input type="checkbox" [checked]="false" [disabled]="checkboxesDisabled" (click)="addDeleteRole(user.id, role)"/></td>
+            }
+          }
+        </tr>
+      }
+    </table>
+  </div>
+}

@@ -13,4 +13,9 @@ export const routes: Routes = [
     loadChildren: () => import(`./book/book.routes`),
     canActivate: [authGuard],
   },
+  {
+    path: 'admin',
+    loadChildren: () => import(`./admin/admin.routes`),
+    canActivate: [authGuard],
+  },
 ];
