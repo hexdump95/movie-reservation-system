@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\DTO\BookSeatResponse;
 use App\DTO\ReservationDetailResponse;
-use App\DTO\ReservationResponse;
 use App\DTO\ReservationSeatDetailResponse;
 use App\DTO\ReservedSeat;
 use App\DTO\ShowtimeResponse;

@@ -16,6 +16,14 @@ class RoleRepository extends ServiceEntityRepository
         parent::__construct($registry, Role::class);
     }
 
+    public function findAllOrderById(): mixed
+    {
+        return $this->createQueryBuilder('r')
+            ->orderBy('r.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findByName(string $name): ?Role
     {
         return $this->createQueryBuilder('r')
