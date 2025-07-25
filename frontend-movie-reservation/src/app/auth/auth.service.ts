@@ -53,19 +53,11 @@ export class AuthService {
     localStorage.removeItem('access_token');
   }
 
-  getUserSub(): Observable<string> {
-    return new Observable((observer) => {
-      this.validateToken().subscribe(res => {
-        if (res.isValid) {
-          const token = this.getToken();
-          if (token) {
-            const decoded = jwtDecode<any>(token);
-            observer.next(decoded.sub);
-          }
-        }
-        observer.complete();
-      });
-    });
+  getUserPayload(): any {
+    const token = this.getToken();
+    if (token) {
+      return jwtDecode<any>(token);
+    }
   }
 
   checkAuthStatus() {

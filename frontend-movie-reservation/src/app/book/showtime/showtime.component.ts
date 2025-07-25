@@ -83,18 +83,14 @@ export class ShowtimeComponent {
     this.seatUpdateSubscription = this.websocketService.seatUpdates$.subscribe({
       next: (update: SeatUpdate | null) => {
 
-        this.authService.getUserSub().subscribe(
-          res => {
-            if (update && update.userEmail !== res) {
-              const seat = this.showtime.seats
-                .flatMap(x => x)
-                .find(x => x.id === update.seatId)!;
-              seat.isOccupied = update.isReserved;
-              if (update.isReserved)
-                this.selectedSeats--;
-            }
-          }
-        )
+        if (update && update.userEmail !== this.authService.getUserPayload().sub) {
+          const seat = this.showtime.seats
+            .flatMap(x => x)
+            .find(x => x.id === update.seatId)!;
+          seat.isOccupied = update.isReserved;
+          if (update.isReserved)
+            this.selectedSeats--;
+        }
       }
     });
   }
