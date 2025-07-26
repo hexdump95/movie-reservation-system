@@ -1,5 +1,5 @@
 import {Component, ElementRef, HostListener} from '@angular/core';
-import {RouterLink} from "@angular/router";
+import {Router, RouterLink} from "@angular/router";
 import {MatToolbar} from "@angular/material/toolbar";
 import {MatButton} from "@angular/material/button";
 import {AuthService} from "../../auth/auth.service";
@@ -22,7 +22,8 @@ export class NavbarComponent {
   userPermissions: string[] = [];
   hideMenu: boolean = true;
 
-  constructor(private authService: AuthService, private eRef: ElementRef) {
+  constructor(private authService: AuthService, private eRef: ElementRef,
+              private router: Router) {
   }
 
   ngOnInit() {
@@ -67,5 +68,10 @@ export class NavbarComponent {
 
   isDeviceSmallThan768() {
     return window.innerWidth < 768;
+  }
+
+  logout() {
+    this.authService.logout();
+    window.location.reload();
   }
 }

@@ -1,0 +1,50 @@
+<div class="container">
+  <div class="square">
+
+    <form [formGroup]="formRegister" (ngSubmit)="onSubmit()">
+      <h1 class="page-title">{{ pageTitle }}</h1>
+
+      <mat-form-field>
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="username" type="text" required>
+      </mat-form-field>
+      <br>
+
+      <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          formControlName="password"
+          [type]="hide ? 'password' : 'text'"
+          required>
+        <button tabindex="-1" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="hide">
+          <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+      </mat-form-field>
+      @if (formRegister.get('password')!.getError('minlength') && formRegister.get('password')?.touched) {
+        <mat-error>Password should be longer than 8 characters.</mat-error>
+      }
+      <br>
+      <mat-form-field>
+        <mat-label>Confirm Password</mat-label>
+        <input
+          matInput
+          formControlName="password2"
+          type="password"
+          required>
+      </mat-form-field>
+      @if (formRegister.hasError('passwordMismatch') && formRegister.get('password2')?.touched && !formRegister.get('password')!.getError('minlength')) {
+        <mat-error>
+          Passwords do not match.
+        </mat-error>
+      }
+
+      <br>
+      <button type="submit" mat-raised-button color="accent" disabled="{{registerSubmitted || formRegister.invalid}}">
+        Sign up
+      </button>
+    </form>
+
+  </div>
+</div>

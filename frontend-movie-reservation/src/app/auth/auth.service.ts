@@ -26,7 +26,13 @@ export class AuthService {
   }
 
   register(user: { username: string; password: string }): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(`${this.apiUrl}/register`, user);
+    return this.http.post<RegisterResponse>(`${this.apiUrl}/register`, user)
+      .pipe(
+        tap(res => {
+          this.userSubject.next(jwtDecode<any>(res.access_token).sub);
+          this.isLoggedInSubject.next(true);
+        })
+      );
   }
 
   login(user: LoginRequest): Observable<LoginResponse> {

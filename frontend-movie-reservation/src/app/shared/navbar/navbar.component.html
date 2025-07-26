@@ -25,11 +25,14 @@
       }
     }
   </ul>
-  <div style="position: absolute; right: 0">
+  <div style="position: absolute; right: 0; display: flex; align-items: center">
     @if (isLoggedIn) {
       <div class="username">
         <p>{{ user }}</p>
       </div>
+      <a (click)="logout()">
+        <button mat-stroked-button color="warn"><b>Logout</b></button>
+      </a>
     } @else {
       <a [routerLink]="['/login']">
         <button mat-stroked-button color="primary"><b>Sign in</b></button>
