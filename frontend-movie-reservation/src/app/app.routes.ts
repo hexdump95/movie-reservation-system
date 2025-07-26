@@ -3,6 +3,7 @@ import {authGuard} from "./auth/auth.guard";
 import {LoginComponent} from "./auth/login/login.component";
 import {HomeComponent} from "./pages/home/home.component";
 import {MovieComponent} from "./movie/movie.component";
+import {ReportComponent} from "./report/report.component";
 
 export const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -17,6 +18,12 @@ export const routes: Routes = [
     path: 'admin',
     loadChildren: () => import(`./admin/admin.routes`),
     canActivate: [authGuard],
-    data: { roles: ['ROLE_ADMIN'] }
+    data: {roles: ['ROLE_ADMIN']}
+  },
+  {
+    path: 'reports',
+    component: ReportComponent,
+    canActivate: [authGuard],
+    data: {permissions: ['read:reports']}
   },
 ];
