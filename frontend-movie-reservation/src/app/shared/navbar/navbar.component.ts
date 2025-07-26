@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ElementRef, HostListener} from '@angular/core';
 import {RouterLink} from "@angular/router";
 import {MatToolbar} from "@angular/material/toolbar";
 import {MatButton} from "@angular/material/button";
@@ -19,14 +19,14 @@ export class NavbarComponent {
   isLoggedIn = false;
   user: any = null;
   userRoles: string[] = [];
+  userPermissions: string[] = [];
+  hideMenu: boolean = true;
 
-  constructor(
-    private authService: AuthService,
-  ) {}
+  constructor(private authService: AuthService, private eRef: ElementRef) {
+  }
 
   ngOnInit() {
-    this.authService.checkAuthStatus();
-
+    this.hideMenu = this.isDeviceSmallThan768();
     this.authService.isLoggedIn$.subscribe(status => {
       this.isLoggedIn = status;
     });
@@ -38,5 +38,34 @@ export class NavbarComponent {
     this.authService.userRoles$.subscribe(userRoles => {
       this.userRoles = userRoles;
     });
+
+    this.authService.userPermissions$.subscribe(userPermissions => {
+      this.userPermissions = userPermissions;
+    });
+  }
+
+  toggleHamburger() {
+    this.hideMenu = !this.hideMenu;
+  }
+
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: MouseEvent) {
+    if (window.innerWidth < 768) {
+      const target = event.target as HTMLElement;
+
+      if (!this.eRef.nativeElement.contains(target)) {
+        this.hideMenu = true;
+      }
+    }
+  }
+
+  closeMenu() {
+    if (window.innerWidth < 768)
+      this.hideMenu = true;
+  }
+
+  isDeviceSmallThan768() {
+    return window.innerWidth < 768;
   }
 }

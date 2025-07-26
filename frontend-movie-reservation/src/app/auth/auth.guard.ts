@@ -8,6 +8,7 @@ export const authGuard: CanActivateFn = (route) => {
   const router: Router = inject(Router);
 
   const requiredRoles: string[] = route.data?.['roles'] || [];
+  const requiredPermissions: string[] = route.data?.['permissions'] || [];
 
   return authService.validateToken().pipe(
     map(valor => {
@@ -16,18 +17,29 @@ export const authGuard: CanActivateFn = (route) => {
         return false;
       }
 
-      if (requiredRoles.length === 0) {
+      if (requiredRoles.length === 0 && requiredPermissions.length === 0) {
         return true;
       }
 
       const payload = authService.getUserPayload();
       const userRoles: string[] = payload?.roles || [];
+      const userPermissions: string[] = payload?.permissions || [];
 
-      const hasRequiredRole = requiredRoles.some(role =>
-        userRoles.includes(role)
-      );
+      const hasRequiredRole = requiredRoles.length === 0
+        ? true
+        : requiredRoles.some(role =>
+          userRoles.includes(role)
+        );
 
-      if (!hasRequiredRole) {
+      const hasRequiredPermission = requiredPermissions.length === 0
+        ? true
+        : requiredPermissions.some(permission =>
+          userPermissions.includes(permission)
+        );
+
+      if (!hasRequiredRole || !hasRequiredPermission) {
+        console.log(!hasRequiredRole);
+        console.log(!hasRequiredPermission);
         void router.navigate(['/']);
         return false;
       }

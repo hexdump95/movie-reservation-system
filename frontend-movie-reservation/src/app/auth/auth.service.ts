@@ -15,10 +15,12 @@ export class AuthService {
   private isLoggedInSubject = new BehaviorSubject<boolean>(false);
   private userSubject = new BehaviorSubject<any>(null);
   private userRolesSubject = new BehaviorSubject<string[]>([]);
+  private userPermissionsSubject = new BehaviorSubject<string[]>([]);
 
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
   user$ = this.userSubject.asObservable();
   userRoles$ = this.userRolesSubject.asObservable();
+  userPermissions$ = this.userPermissionsSubject.asObservable();
 
   constructor(private http: HttpClient) {
   }
@@ -38,7 +40,24 @@ export class AuthService {
   }
 
   validateToken(): Observable<ValidateTokenResponse> {
-    return this.http.post<ValidateTokenResponse>(`${this.apiUrl}/validateToken`, {});
+    return this.http.post<ValidateTokenResponse>(`${this.apiUrl}/validateToken`, null)
+      .pipe(tap(res => {
+        if (res.isValid) {
+          const token = this.getToken();
+          if (token) {
+            const decoded = jwtDecode<any>(token);
+            this.userSubject.next(decoded.sub);
+            this.isLoggedInSubject.next(true);
+            this.userRolesSubject.next(decoded.roles);
+            this.userPermissionsSubject.next(decoded.permissions);
+          } else {
+            this.userSubject.next(null);
+            this.isLoggedInSubject.next(false);
+            this.userRolesSubject.next([]);
+            this.userPermissionsSubject.next([]);
+          }
+        }
+      }));
   }
 
   getToken(): string | null {
@@ -58,25 +77,6 @@ export class AuthService {
     if (token) {
       return jwtDecode<any>(token);
     }
-  }
-
-  checkAuthStatus() {
-    this.validateToken().subscribe(
-      res => {
-        if (res.isValid) {
-          const token = this.getToken();
-          if (token) {
-            const decoded = jwtDecode<any>(token);
-            this.userSubject.next(decoded.sub);
-            this.isLoggedInSubject.next(true);
-            this.userRolesSubject.next(decoded.roles);
-          } else {
-            this.userSubject.next(null);
-            this.isLoggedInSubject.next(false);
-            this.userRolesSubject.next([]);
-          }
-        }
-      });
   }
 
 }

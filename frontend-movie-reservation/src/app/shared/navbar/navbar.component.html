@@ -1,19 +1,40 @@
 <mat-toolbar>
-  <a href="/"><span class="page-title">movie-reservation</span></a>
   @if (isLoggedIn) {
-    <span class="spacer"></span>
-    <a [routerLink]="['/movies']">
-      <b>Movies</b>
-    </a>
-    <span class="spacer"></span>
+    <div class="hamburger" (click)="toggleHamburger()">☰</div>
   }
-  <span class="spacer"></span>
-  @if (isLoggedIn) {
-    <p>{{ user }}</p>
-  } @else {
-    <a [routerLink]="['/login']">
-      <button mat-stroked-button color="primary"><b>Sign in</b></button>
-    </a>
-  }
+  <div style="margin: 16px;">
+    <a href="/"><span class="page-title">Home</span></a>
+  </div>
+  <ul [hidden]="hideMenu">
+    @if (isLoggedIn) {
+      <li>
+        <a [routerLink]="['/movies']" (click)="closeMenu()">Movies</a>
+      </li>
+      <li>
+        <a [routerLink]="['/book']" (click)="closeMenu()">Reservations</a>
+      </li>
+      @if (userRoles.includes('ROLE_ADMIN')) {
+        <li>
+          <a [routerLink]="['/admin/users']" (click)="closeMenu()">Users</a>
+        </li>
+      }
+      @if (userPermissions.includes('read:reports')) {
+        <li>
+          <a [routerLink]="['/reports']" (click)="closeMenu()">Reports</a>
+        </li>
+      }
+    }
+  </ul>
+  <div style="position: absolute; right: 0">
+    @if (isLoggedIn) {
+      <div class="username">
+        <p>{{ user }}</p>
+      </div>
+    } @else {
+      <a [routerLink]="['/login']">
+        <button mat-stroked-button color="primary"><b>Sign in</b></button>
+      </a>
+    }
+  </div>
 </mat-toolbar>
 <div class="block"></div>
