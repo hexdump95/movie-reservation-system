@@ -4,13 +4,13 @@ namespace App\Controller;
 
 use App\DTO\UpdateRoleRequest;
 use App\DTO\UpdateRolesRequest;
-use App\Repository\UserRepository;
 use App\Service\AdminService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/api/v1/admin')]
@@ -26,6 +26,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/usersAndRoles', name: 'getUsersAndRoles', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function getUsersAndRoles(): JsonResponse
     {
         $users = $this->adminService->getUsersAndRoles();
@@ -36,6 +37,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/users/{userId}/role', name: 'updateRole', methods: ['PUT'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function updateRole(int $userId, Request $request): JsonResponse
     {
         $role = $this->serializer->deserialize($request->getContent(), UpdateRoleRequest::class, 'json');
@@ -46,8 +48,8 @@ class AdminController extends AbstractController
         );
     }
 
-
     #[Route('/users/{userId}/roles', name: 'updateRoles', methods: ['PUT'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function updateRoles(int $userId, Request $request): JsonResponse
     {
         $roles = $this->serializer->deserialize($request->getContent(), UpdateRolesRequest::class, 'json');
