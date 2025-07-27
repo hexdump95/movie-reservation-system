@@ -4,7 +4,6 @@ namespace App\DTO;
 
 class GetMovieDetailResponse
 {
-
     private ?string $title;
     private ?string $description;
     private ?string $posterImage;

@@ -24,6 +24,15 @@ class GenreRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    public function findAllWhereDeleteAtIsNull(): mixed
+    {
+        return $this->createQueryBuilder('g')
+            ->where('g.deletedAt is null')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Genre[] Returns an array of Genre objects
     //     */
