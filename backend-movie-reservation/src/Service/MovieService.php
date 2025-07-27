@@ -10,6 +10,7 @@ use App\DTO\GetMovieDetailShowtimeResponse;
 use App\DTO\GetMovieResponse;
 use App\DTO\MovieDetailResponse;
 use App\DTO\UpdateMovieRequest;
+use App\DTO\UpdateMovieResponse;
 use App\Entity\Movie;
 use App\Exception\ServiceException;
 use App\Repository\GenreRepository;
@@ -63,7 +64,7 @@ class MovieService
 
     public function getMovies(): array
     {
-        $movies = $this->movieRepository->findAllWhereDeletedAtIsNull();
+        $movies = $this->movieRepository->findAllWhereDeletedAtIsNullOrderByIdDesc();
         $moviesResponse = [];
         foreach ($movies as $movie) {
             $movieResponse = (new GetMovieResponse())
@@ -133,7 +134,7 @@ class MovieService
     /**
      * @throws ServiceException
      */
-    public function updateMovie(int $id, UpdateMovieRequest $request): bool
+    public function updateMovie(int $id, UpdateMovieRequest $request): UpdateMovieResponse
     {
         $entity = $this->movieRepository->findById($id);
         if (!$entity) {
@@ -150,8 +151,13 @@ class MovieService
         $entity->setReleaseDate($request->getReleaseDate());
         $entity->setYear($request->getYear());
         $entity->setGenre($genre);
-        $this->movieRepository->save($entity);
-        return true;
+        $entity = $this->movieRepository->save($entity);
+
+        return (new UpdateMovieResponse())
+            ->setId($entity->getId())
+            ->setTitle($entity->getTitle())
+            ->setYear($entity->getYear())
+            ->setGenreName($entity->getGenre()->getName());
     }
 
     public function deleteMovie(int $id): bool

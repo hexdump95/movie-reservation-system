@@ -7,6 +7,7 @@ import {
   MatDialogTitle
 } from '@angular/material/dialog';
 import {MatButton} from "@angular/material/button";
+import {GetMovieDetailResponse} from "../../../core/movie-response";
 
 @Component({
   selector: 'app-movie-dialog',
@@ -23,7 +24,7 @@ import {MatButton} from "@angular/material/button";
 export class MovieDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<MovieDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public movie: any) {
+    @Inject(MAT_DIALOG_DATA) public movie: GetMovieDetailResponse) {
   }
 
   onConfirm() {

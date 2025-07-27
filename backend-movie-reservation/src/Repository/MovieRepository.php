@@ -84,10 +84,11 @@ class MovieRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function findAllWhereDeletedAtIsNull(): mixed
+    public function findAllWhereDeletedAtIsNullOrderByIdDesc(): mixed
     {
         return $this->createQueryBuilder('m')
             ->where('m.deletedAt is null')
+            ->orderBy('m.id', 'desc')
             ->getQuery()
             ->getResult();
     }

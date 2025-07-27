@@ -100,9 +100,9 @@ class MovieController extends AbstractController
     {
         $movie = $this->serializer->deserialize($request->getContent(), UpdateMovieRequest::class, 'json');
         try {
-            $this->movieService->updateMovie($id, $movie);
+            $response = $this->movieService->updateMovie($id, $movie);
             return new JsonResponse(
-                $this->serializer->normalize($movie),
+                $this->serializer->normalize($response),
                 Response::HTTP_OK
             );
         } catch (ServiceException $exception) {
