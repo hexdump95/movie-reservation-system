@@ -13,10 +13,31 @@ export class MovieService {
   }
 
   getUpcomingMovies(page: number): Observable<PageMovieResponse> {
-    return this.http.get<PageMovieResponse>(`${this.apiUrl}?page=${page}`);
+    return this.http.get<PageMovieResponse>(`${this.apiUrl}/upcoming?page=${page}`);
   }
 
   getMovieDetail(movieId: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${movieId}`);
+    return this.http.get<any>(`${this.apiUrl}/upcoming/${movieId}`);
   }
+
+  getMovies(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/movies`);
+  }
+
+  getMovie(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/movies/${id}`);
+  }
+
+  createMovie(movie: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/movies`, movie);
+  }
+
+  updateMovie(id: number, movie: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/movies/${id}`, movie);
+  }
+
+  deleteMovie(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/movies/${id}`);
+  }
+
 }
