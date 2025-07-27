@@ -4,7 +4,7 @@ import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from "@angula
 import {MatButton} from "@angular/material/button";
 import {MatInput} from "@angular/material/input";
 import {BookService} from "../book.service";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-pay',
@@ -31,6 +31,7 @@ export class PayComponent {
     private fb: FormBuilder,
     private bookService: BookService,
     private route: ActivatedRoute,
+    private router: Router,
   ) {
     this.showtimeId = this.route.snapshot.params['id'];
   }
@@ -43,7 +44,7 @@ export class PayComponent {
     this.bookService
       .paySeats(this.showtimeId)
       .subscribe(res => {
-        console.log(res);
+        void this.router.navigate(['/book/' + res.id]);
       });
   }
 }

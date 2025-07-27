@@ -4,12 +4,12 @@
       <div class="book-info" [routerLink]="['./', book.bookId]">
         <h2>{{ book.movieTitle }}</h2>
         <p><b>Theater #{{ book.theaterNumber }}</b></p>
-        <p><b>Movie starts at: </b>{{ book.showtimeDateStart | date: 'Y-MM-dd' }}</p>
+        <p><b>Movie starts on: </b>{{ book.showtimeDateStart | date: 'Y-MM-dd' }}</p>
         <h3 [ngStyle]="{'color': book.bookStatus === 'PAID' ?
                                 'green' : book.bookStatus === 'CANCELED' ?
                                           'yellow' : 'white'}">
           <b>Status: </b>{{ book.bookStatus | titlecase }}</h3>
-        <p><b>Tickets bought at: </b>{{ book.bookCreatedAt | date : 'Y-MM-dd' }}</p>
+        <p><b>Tickets bought on: </b>{{ book.bookCreatedAt | date : 'Y-MM-dd' }}</p>
         <p><b>Seats: </b> {{ book.totalSeats }} (Total price: {{ book.bookTotalPrice | currency }})</p>
       </div>
       <div class="book-buttons">
