@@ -16,6 +16,14 @@ class GenreRepository extends ServiceEntityRepository
         parent::__construct($registry, Genre::class);
     }
 
+    public function findById(int $id): ?Genre
+    {
+        return $this->createQueryBuilder('g')
+            ->where('g.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
     //    /**
     //     * @return Genre[] Returns an array of Genre objects
     //     */

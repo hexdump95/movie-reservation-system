@@ -84,6 +84,31 @@ class MovieRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    public function findAllWhereDeletedAtIsNull(): mixed
+    {
+        return $this->createQueryBuilder('m')
+            ->where('m.deletedAt is null')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findById(int $id): mixed
+    {
+        return $this->createQueryBuilder('m')
+            ->where('m.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+
+    public function save(Movie $entity): Movie
+    {
+        $this->getEntityManager()->persist($entity);
+        $this->getEntityManager()->flush();
+        return $entity;
+    }
+
     //    /**
     //     * @return Movie[] Returns an array of Movie objects
     //     */
