@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>{{ movie.title }}</h1>
+<mat-dialog-content>
+  <p>{{ movie.description }}</p>
+  <p><strong>Duration:</strong> {{ movie.duration }}</p>
+  <p><strong>Release date:</strong> {{ movie.releaseDate }}</p>
+  <p><strong>Year:</strong> {{ movie.year }}</p>
+  <p><strong>Genre:</strong> {{ movie.genre.name }}</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button color="primary" (click)="onConfirm()">Accept</button>
+</mat-dialog-actions>

@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {MovieService} from "./movie.service";
+import {MovieService} from "../core/movie.service";
 import {PageMovieResponse} from "./page-movie-response";
 import {NgStyle} from "@angular/common";
 import {MovieDetailComponent} from "./movie-detail/movie-detail.component";

@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {MovieService} from "../movie.service";
+import {MovieService} from "../../core/movie.service";
 import {DatePipe} from "@angular/common";
 import {RouterLink} from "@angular/router";
 
