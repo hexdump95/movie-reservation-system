@@ -1,0 +1,59 @@
+<h1 mat-dialog-title>Edit movie</h1>
+<form [formGroup]="formMovie" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+
+    <mat-form-field>
+      <mat-label>Title</mat-label>
+      <input matInput formControlName="title" type="text" required>
+    </mat-form-field>
+    <br>
+
+    <mat-form-field>
+      <mat-label>Description</mat-label>
+      <input matInput formControlName="description" type="text" required>
+    </mat-form-field>
+    <br>
+
+    <mat-form-field>
+      <mat-label>Poster Image (url)</mat-label>
+      <input matInput formControlName="posterImage" type="text" required>
+    </mat-form-field>
+    <br>
+
+    <mat-form-field>
+      <mat-label>Duration</mat-label>
+      <input matInput formControlName="duration" type="number" required>
+    </mat-form-field>
+    <br>
+
+    <mat-form-field>
+      <mat-label>Release date</mat-label>
+      <input matInput formControlName="releaseDate" type="text" required>
+    </mat-form-field>
+    <br>
+
+    <mat-form-field>
+      <mat-label>Year</mat-label>
+      <input matInput formControlName="year" type="number" required>
+    </mat-form-field>
+    <br>
+
+    <mat-form-field>
+      <mat-label>Genre</mat-label>
+      <mat-select formControlName="genreId">
+        <mat-option>None</mat-option>
+        @for (genre of genres; track $index) {
+          <mat-option [value]="genre.id">{{ genre.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <br>
+
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button type="button" mat-button (click)="onCancel()">Cancel</button>
+    <button type="submit" mat-raised-button color="accent" disabled="{{formSubmitted || formMovie.invalid}}">
+      Create
+    </button>
+  </mat-dialog-actions>
+</form>

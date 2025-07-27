@@ -2,6 +2,8 @@
   <app-loader></app-loader>
 }
 <h1>Movies</h1>
+<button mat-raised-button color="accent" (click)="openCreateMovieDialog()">Create</button>
+<br><br>
 <div class="table-container">
   <table>
     <tr>
@@ -17,6 +19,7 @@
         <td>{{ movie.genreName }}</td>
         <td>
           <button mat-button color="primary" (click)="openMovieDialog(movie.id)">View</button>
+          <button mat-button color="accent" (click)="openEditMovieDialog(movie.id)">Edit</button>
           <button mat-button color="warn" (click)="openDeleteDialog(movie)">Delete</button>
         </td>
       </tr>

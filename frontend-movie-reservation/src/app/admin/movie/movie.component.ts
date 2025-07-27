@@ -5,7 +5,9 @@ import {MatDialog} from "@angular/material/dialog";
 import {MovieDialogComponent} from "./movie-dialog/movie-dialog.component";
 import {LoaderComponent} from "../../shared/loader/loader.component";
 import {ConfirmDialogComponent} from "../../shared/confirm-dialog/confirm-dialog.component";
-import {GetMovieResponse} from "../../core/movie-response";
+import {GetMovieResponse, UpdateMovieResponse} from "../../core/movie-response";
+import {EditMovieDialogComponent} from "./edit-movie-dialog/edit-movie-dialog.component";
+import {CreateMovieDialogComponent} from "./create-movie-dialog/create-movie-dialog.component";
 
 @Component({
   selector: 'app-movie',
@@ -41,7 +43,45 @@ export class MovieComponent {
     this.movieService.getMovie(movieId).subscribe(movie => {
       this.loading = false;
       this.dialog.open(MovieDialogComponent, {
-        data: movie
+        data: movie,
+        disableClose: true
+      });
+    });
+  }
+
+  openCreateMovieDialog() {
+    const buttonElement = document.activeElement as HTMLElement;
+    buttonElement.blur();
+    this.loading = true;
+    this.loading = false;
+    const dialogRef = this.dialog.open(CreateMovieDialogComponent,
+      {
+        disableClose: true
+      });
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        window.location.reload();
+      }
+    });
+  }
+
+  openEditMovieDialog(movieId: number) {
+    const buttonElement = document.activeElement as HTMLElement;
+    buttonElement.blur();
+    this.loading = true;
+    this.movieService.getMovie(movieId).subscribe(movie => {
+      this.loading = false;
+      const dialogRef = this.dialog.open(EditMovieDialogComponent, {
+        data: {movieId, movie},
+        disableClose: true
+      });
+      dialogRef.afterClosed().subscribe((res: UpdateMovieResponse|null) => {
+        if(res) {
+          const index = this.movies.findIndex(x => x.id === res.id);
+          if (index !== -1) {
+            this.movies[index] = {id: res.id, title: res.title, year: res.year, genreName: res.genreName};
+          }
+        }
       });
     });
   }

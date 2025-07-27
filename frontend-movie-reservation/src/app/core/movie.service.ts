@@ -2,7 +2,13 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {PageMovieResponse} from "../movie/page-movie-response";
-import {GetMovieDetailResponse, GetMovieResponse} from "./movie-response";
+import {
+  CreateMovieRequest,
+  CreateMovieResponse,
+  GetMovieDetailResponse,
+  GetMovieResponse,
+  UpdateMovieResponse
+} from "./movie-response";
 
 @Injectable({
   providedIn: 'root'
@@ -29,12 +35,12 @@ export class MovieService {
     return this.http.get<GetMovieDetailResponse>(`${this.apiUrl}/${id}`);
   }
 
-  createMovie(movie: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}`, movie);
+  createMovie(movie: CreateMovieRequest): Observable<CreateMovieResponse> {
+    return this.http.post<CreateMovieResponse>(`${this.apiUrl}`, movie);
   }
 
-  updateMovie(id: number, movie: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, movie);
+  updateMovie(id: number, movie: any): Observable<UpdateMovieResponse> {
+    return this.http.put<UpdateMovieResponse>(`${this.apiUrl}/${id}`, movie);
   }
 
   deleteMovie(id: number): Observable<any> {
