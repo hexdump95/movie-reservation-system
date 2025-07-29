@@ -3,6 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {PageMovieResponse} from "../movie/page-movie-response";
 import {
+  AddShowtimeRequest, AddShowtimeResponse,
   CreateMovieRequest,
   CreateMovieResponse,
   GetMovieDetailResponse,
@@ -53,5 +54,9 @@ export class MovieService {
 
   removeShowtime(id: number) {
     return this.http.delete<any>(`${this.apiUrl}/showtimes/${id}`);
+  }
+
+  addShowtime(movieId: number, showtime: AddShowtimeRequest): Observable<AddShowtimeResponse> {
+    return this.http.post<AddShowtimeResponse>(`${this.apiUrl}/${movieId}/showtimes`, showtime);
   }
 }

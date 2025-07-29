@@ -62,3 +62,22 @@ export interface GetShowtimeResponse {
   theaterNumber: number;
   hasBooks: boolean;
 }
+
+export interface UnavailableDate {
+  from: Date;
+  to: Date;
+}
+
+export interface AddShowtimeRequest {
+  dateStart: string;
+  theaterId: number;
+}
+
+export interface AddShowtimeResponse {
+  id: number;
+  dateStart: string;
+  dateEnd: string;
+  theaterId: number;
+  theaterNumber: number;
+  hasBooks: boolean;
+}
