@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\DTO\UpdateRoleRequest;
 use App\DTO\UpdateRolesRequest;
-use App\Service\AdminService;
+use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,15 +13,15 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/api/v1/admin')]
-class AdminController extends AbstractController
+#[Route('/api/v1/users')]
+class UserController extends AbstractController
 {
-    private AdminService $adminService;
+    private UserService $userService;
     private SerializerInterface $serializer;
 
-    public function __construct(AdminService $adminService, SerializerInterface $serializer)
+    public function __construct(UserService $userService, SerializerInterface $serializer)
     {
-        $this->adminService = $adminService;
+        $this->userService = $userService;
         $this->serializer = $serializer;
     }
 
@@ -29,7 +29,7 @@ class AdminController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function getUsersAndRoles(): JsonResponse
     {
-        $users = $this->adminService->getUsersAndRoles();
+        $users = $this->userService->getUsersAndRoles();
         return new JsonResponse(
             $this->serializer->normalize($users),
             Response::HTTP_OK
@@ -41,7 +41,7 @@ class AdminController extends AbstractController
     public function updateRole(int $userId, Request $request): JsonResponse
     {
         $role = $this->serializer->deserialize($request->getContent(), UpdateRoleRequest::class, 'json');
-        $userUpdated = $this->adminService->updateRole($userId, $role);
+        $userUpdated = $this->userService->updateRole($userId, $role);
         return new JsonResponse(
             ['success' => $userUpdated],
             Response::HTTP_OK
@@ -53,7 +53,7 @@ class AdminController extends AbstractController
     public function updateRoles(int $userId, Request $request): JsonResponse
     {
         $roles = $this->serializer->deserialize($request->getContent(), UpdateRolesRequest::class, 'json');
-        $userUpdated = $this->adminService->updateRoles($userId, $roles);
+        $userUpdated = $this->userService->updateRoles($userId, $roles);
         return new JsonResponse(
             ['success' => $userUpdated],
             Response::HTTP_OK

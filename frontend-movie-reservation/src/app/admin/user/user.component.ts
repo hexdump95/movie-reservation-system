@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {AdminService} from "../admin.service";
+import {UserService} from "../../core/user.service";
 import {LoaderComponent} from "../../shared/loader/loader.component";
 
 @Component({
@@ -15,11 +15,11 @@ export class UserComponent {
   usersAndRoles: any;
   checkboxesDisabled = false;
 
-  constructor(private adminService: AdminService) {
+  constructor(private userService: UserService) {
   }
 
   ngOnInit() {
-    this.adminService.getUsersAndRoles().subscribe(
+    this.userService.getUsersAndRoles().subscribe(
       (res: any) => {
         this.usersAndRoles = res;
       }
@@ -28,7 +28,7 @@ export class UserComponent {
 
   addDeleteRole(userId: number, role: string) {
     this.checkboxesDisabled = true;
-    this.adminService.updateRoleUser(userId, role).subscribe(
+    this.userService.updateRoleUser(userId, role).subscribe(
       (res: any) => {
         this.checkboxesDisabled = false;
       }

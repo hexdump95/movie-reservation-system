@@ -11,7 +11,7 @@ use App\Repository\RoleRepository;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 
-class AdminService
+class UserService
 {
     private UserRepository $userRepository;
     private RoleRepository $roleRepository;

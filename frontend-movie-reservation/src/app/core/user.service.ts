@@ -5,8 +5,8 @@ import {Observable} from "rxjs";
 @Injectable({
   providedIn: 'root'
 })
-export class AdminService {
-  private apiUrl = 'http://localhost:8080/api/v1/admin';
+export class UserService {
+  private apiUrl = 'http://localhost:8080/api/v1/ysers';
 
   constructor(private http: HttpClient) {
   }
