@@ -1,0 +1,28 @@
+<h1 mat-dialog-title>Add Showtime</h1>
+<form [formGroup]="showtimeForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+
+    <mat-form-field>
+      <mat-label>Theater #</mat-label>
+      <mat-select formControlName="theaterId" (valueChange)="getUnavailableDates($event)">
+        <mat-option>None</mat-option>
+        @for (theater of theaters; track $index) {
+          <mat-option [value]="theater.id">{{ theater.number }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Date start</mat-label>
+      <input matInput formControlName="dateStart" type="text" required>
+    </mat-form-field>
+    <br>
+
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button type="button" mat-button (click)="onCancel()">Cancel</button>
+    <button type="submit" mat-button color="primary" disabled="{{formSubmitted || showtimeForm.invalid}}">Create
+    </button>
+  </mat-dialog-actions>
+
+</form>

@@ -44,7 +44,7 @@ export class MovieComponent {
     this.movieService.getShowtimesByMovieId(movieId).subscribe(showtimes => {
       this.loading = false;
       this.dialog.open(ShowtimeListDialogComponent, {
-        data: showtimes,
+        data: {showtimes, movieId},
         disableClose: true
       });
     });
@@ -90,8 +90,8 @@ export class MovieComponent {
         data: {movieId, movie},
         disableClose: true
       });
-      dialogRef.afterClosed().subscribe((res: UpdateMovieResponse|null) => {
-        if(res) {
+      dialogRef.afterClosed().subscribe((res: UpdateMovieResponse | null) => {
+        if (res) {
           const index = this.movies.findIndex(x => x.id === res.id);
           if (index !== -1) {
             this.movies[index] = {id: res.id, title: res.title, year: res.year, genreName: res.genreName};

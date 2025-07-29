@@ -9,6 +9,7 @@ class AddShowtimeResponse
     private \DateTime $dateEnd;
     private int $theaterId;
     private int $theaterNumber;
+    private bool $hasBooks;
 
     public function getId(): int
     {
@@ -62,6 +63,17 @@ class AddShowtimeResponse
     public function setTheaterNumber(int $theaterNumber): static
     {
         $this->theaterNumber = $theaterNumber;
+        return $this;
+    }
+
+    public function getHasBooks(): bool
+    {
+        return $this->hasBooks;
+    }
+
+    public function setHasBooks(bool $hasBooks): static
+    {
+        $this->hasBooks = $hasBooks;
         return $this;
     }
 

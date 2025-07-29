@@ -236,7 +236,8 @@ class MovieService
             ->setDateStart($showtimeDateStart)
             ->setDateEnd($showtimeDateEnd)
             ->setTheaterNumber($theater->getNumber())
-            ->setTheaterId($theater->getId());
+            ->setTheaterId($theater->getId())
+            ->setHasBooks(false);
     }
 
     public function removeShowtime(int $showtimeId): bool
