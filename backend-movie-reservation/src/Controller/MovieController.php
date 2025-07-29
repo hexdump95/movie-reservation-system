@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DTO\AddShowtimeRequest;
 use App\DTO\CreateMovieRequest;
 use App\DTO\UpdateMovieRequest;
 use App\Exception\HttpServiceException;
@@ -119,6 +120,43 @@ class MovieController extends AbstractController
             return new JsonResponse(null, Response::HTTP_NO_CONTENT);
         else
             return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
+    }
+
+    #[Route('/{movieId}/showtimes', name: 'getShowtimes', methods: ['GET'])]
+    public function getShowtimes(int $movieId): JsonResponse
+    {
+        $showtimes = $this->movieService->getShowtimes($movieId);
+        return new JsonResponse(
+            $this->serializer->normalize($showtimes),
+            Response::HTTP_OK
+        );
+    }
+
+    #[Route('/{movieId}/showtimes', name: 'addShowtime', methods: ['POST'])]
+    #[IsGranted("update:movies")]
+    public function addShowtime(int $movieId, Request $request): JsonResponse
+    {
+        $showtimeRequest = $this->serializer->deserialize($request->getContent(), AddShowtimeRequest::class, 'json');
+        try {
+            $showtimeResponse = $this->movieService->addShowtime($movieId, $showtimeRequest);
+            return new JsonResponse(
+                $this->serializer->normalize($showtimeResponse),
+                Response::HTTP_CREATED
+            );
+        } catch (ServiceException $exception) {
+            throw new HttpServiceException($exception->getCode(), $exception->getMessage(), $exception->getDetails());
+        }
+    }
+
+    #[Route('/showtimes/{showtimeId}', name: 'removeShowtime', methods: ['DELETE'])]
+    #[IsGranted("update:movies")]
+    public function removeShowtime(int $showtimeId): JsonResponse
+    {
+        $showtimeResponse = $this->movieService->removeShowtime($showtimeId);
+        return new JsonResponse(
+            ['success' => $showtimeResponse],
+            Response::HTTP_OK
+        );
     }
 
 }

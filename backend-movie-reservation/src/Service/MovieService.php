@@ -2,30 +2,42 @@
 
 namespace App\Service;
 
+use App\DTO\AddShowtimeRequest;
+use App\DTO\AddShowtimeResponse;
 use App\DTO\AvailableShowtimeResponse;
 use App\DTO\CreateMovieRequest;
 use App\DTO\GetMovieDetailGenreResponse;
 use App\DTO\GetMovieDetailResponse;
 use App\DTO\GetMovieDetailShowtimeResponse;
 use App\DTO\GetMovieResponse;
+use App\DTO\GetShowtimeResponse;
 use App\DTO\MovieDetailResponse;
 use App\DTO\UpdateMovieRequest;
 use App\DTO\UpdateMovieResponse;
 use App\Entity\Movie;
+use App\Entity\Showtime;
 use App\Exception\ServiceException;
 use App\Repository\GenreRepository;
 use App\Repository\MovieRepository;
+use App\Repository\ShowtimeRepository;
+use App\Repository\TheaterRepository;
 use DateTimeImmutable;
 
 class MovieService
 {
     private MovieRepository $movieRepository;
     private GenreRepository $genreRepository;
+    private ShowtimeRepository $showtimesRepository;
+    private TheaterRepository $theaterRepository;
+    private ShowtimeRepository $showtimeRepository;
 
-    public function __construct(MovieRepository $movieRepository, GenreRepository $genreRepository)
+    public function __construct(MovieRepository $movieRepository, GenreRepository $genreRepository, ShowtimeRepository $showtimesRepository, TheaterRepository $theaterRepository, ShowtimeRepository $showtimeRepository)
     {
         $this->movieRepository = $movieRepository;
         $this->genreRepository = $genreRepository;
+        $this->showtimesRepository = $showtimesRepository;
+        $this->theaterRepository = $theaterRepository;
+        $this->showtimeRepository = $showtimeRepository;
     }
 
     public function getUpcomingMovies(int $page): array
@@ -172,6 +184,72 @@ class MovieService
         $movie->setDeletedAt(new DateTimeImmutable());
         $this->movieRepository->save($movie);
         return true;
+    }
+
+    public function getShowtimes(int $movieId): array
+    {
+        $showtimes = $this->showtimesRepository->findAllByMovieId($movieId);
+        $showtimesResponse = [];
+        foreach ($showtimes as $showtime) {
+            $showtimeResponse = (new GetShowtimeResponse())
+                ->setId($showtime->getId())
+                ->setDateStart($showtime->getDateStart())
+                ->setDateEnd($showtime->getDateEnd())
+                ->setTheaterId($showtime->getTheater()->getId())
+                ->setTheaterNumber($showtime->getTheater()->getNumber());
+            $showtimesResponse[] = $showtimeResponse;
+        }
+        return $showtimesResponse;
+    }
+
+    public function addShowtime(int $id, AddShowtimeRequest $showtimeRequest): AddShowtimeResponse
+    {
+        $showtimeDateStart = $showtimeRequest->getDateStart();
+
+        $movie = $this->movieRepository->findById($id);
+        if (!$movie) {
+            throw new ServiceException(['Movie not found']);
+        }
+
+        $showtimeDateEnd = (clone $showtimeDateStart)->add(new \DateInterval('PT' . ($movie->getDuration() + 30) . 'M'));
+        $isAvailable = $this->showtimeRepository->checkAvailableDateByTheaterId($showtimeDateStart, $showtimeDateEnd, $showtimeRequest->getTheaterId());
+        if (!$isAvailable) {
+            throw new ServiceException([]);
+        }
+
+        $theater = $this->theaterRepository->findById($showtimeRequest->getTheaterId());
+        if (!$theater) {
+            throw new ServiceException(['Theater not found']);
+        }
+        $showtime = (new Showtime())
+            ->setMovie($movie)
+            ->setDateStart($showtimeDateStart)
+            ->setDateEnd($showtimeDateEnd)
+            ->setTheater($theater);
+
+        $movie->getShowtimes()->add($showtime);
+        $this->movieRepository->save($movie);
+
+        return (new AddShowtimeResponse())
+            ->setId($showtime->getId())
+            ->setDateStart($showtimeDateStart)
+            ->setDateEnd($showtimeDateEnd)
+            ->setTheaterNumber($theater->getNumber())
+            ->setTheaterId($theater->getId());
+    }
+
+    public function removeShowtime(int $showtimeId): bool
+    {
+        $showtime = $this->showtimeRepository->findOneById($showtimeId);
+        if (!$showtime) {
+            return false;
+        }
+        if ($showtime->getBooks()->count() === 0) {
+            $this->showtimeRepository->delete($showtime);
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

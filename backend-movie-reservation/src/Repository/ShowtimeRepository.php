@@ -25,6 +25,44 @@ class ShowtimeRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    public function findAllByMovieId(int $movieId): mixed
+    {
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.movie', 'm')
+            ->andWhere('m.id = :movieId')
+            ->setParameter('movieId', $movieId)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function checkAvailableDateByTheaterId(\DateTime $dateStart, \DateTime $dateEnd, int $theaterId): bool
+    {
+        $query = "
+        select count(*)
+        from showtime sh
+        left join theater th on th.id = sh.theater_id
+        where
+            th.id = :theaterId
+            and (
+                (:dateStart > sh.date_start and :dateEnd < sh.date_end)
+                or
+                (:dateEnd > sh.date_start and :dateStart < sh.date_end)
+            )
+        ;
+        ";
+        $statement = $this->getEntityManager()->getConnection()->prepare($query);
+        $statement->bindValue('dateStart', $dateStart->format('Y-m-d\TH:i:s'));
+        $statement->bindValue('dateEnd', $dateEnd->format('Y-m-d\TH:i:s'));
+        $statement->bindValue('theaterId', $theaterId);
+        return $statement->executeQuery()->fetchOne() === 0;
+    }
+
+    public function delete(Showtime $showtime): void
+    {
+        $this->getEntityManager()->remove($showtime);
+        $this->getEntityManager()->flush();
+    }
+
     //    /**
     //     * @return Showtime[] Returns an array of Showtime objects
     //     */

@@ -41,7 +41,7 @@ class Movie
     /**
      * @var Collection<int, Showtime>
      */
-    #[ORM\OneToMany(targetEntity: Showtime::class, mappedBy: 'movie', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Showtime::class, mappedBy: 'movie', cascade: ['all'], orphanRemoval: true)]
     #[ORM\OrderBy(['dateStart' => 'ASC'])]
     private Collection $showtimes;
 

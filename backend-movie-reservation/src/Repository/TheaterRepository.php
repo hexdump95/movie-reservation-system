@@ -23,6 +23,15 @@ class TheaterRepository extends ServiceEntityRepository
         return $entity;
     }
 
+    public function findById(int $id): ?Theater
+    {
+        return $this->createQueryBuilder('t')
+            ->where('t.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     //    /**
     //     * @return Theater[] Returns an array of Theater objects
     //     */
