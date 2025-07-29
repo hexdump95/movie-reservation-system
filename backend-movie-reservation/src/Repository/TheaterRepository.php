@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Theater;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * @extends ServiceEntityRepository<Theater>
@@ -30,6 +31,44 @@ class TheaterRepository extends ServiceEntityRepository
             ->setParameter('id', $id)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    public function existsByNumber(int $number): bool
+    {
+        $entity = $this->createQueryBuilder('u')
+            ->where('u.number = :number')
+            ->setParameter('number', $number)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return $entity !== null;
+    }
+
+    public function findAllWhereDeletedAtIsNull()
+    {
+        return $this->createQueryBuilder('t')
+            ->where('t.deletedAt is null')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findUnavailableDates(int $id): array
+    {
+        $query = "
+            select sh.date_start \"from\", sh.date_end \"to\" from showtime sh
+            left join theater th on th.id = sh.theater_id
+            where th.id = :id
+            ;";
+        $statement = $this->getEntityManager()->getConnection()->prepare($query);
+        $statement->bindValue('id', $id);
+        return $statement->executeQuery()->fetchAllAssociative();
+    }
+
+    public function delete(Theater $entity): void
+    {
+        $this->getEntityManager()->remove($entity);
+        $this->getEntityManager()->flush();
     }
 
     //    /**
