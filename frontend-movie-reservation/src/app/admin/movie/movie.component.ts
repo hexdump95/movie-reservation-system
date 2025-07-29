@@ -8,6 +8,7 @@ import {ConfirmDialogComponent} from "../../shared/confirm-dialog/confirm-dialog
 import {GetMovieResponse, UpdateMovieResponse} from "../../core/movie-response";
 import {EditMovieDialogComponent} from "./edit-movie-dialog/edit-movie-dialog.component";
 import {CreateMovieDialogComponent} from "./create-movie-dialog/create-movie-dialog.component";
+import {ShowtimeListDialogComponent} from "./showtime-list-dialog/showtime-list-dialog.component";
 
 @Component({
   selector: 'app-movie',
@@ -35,6 +36,20 @@ export class MovieComponent {
       }
     )
   }
+
+  openShowtimesDialog(movieId: number) {
+    const buttonElement = document.activeElement as HTMLElement;
+    buttonElement.blur();
+    this.loading = true;
+    this.movieService.getShowtimesByMovieId(movieId).subscribe(showtimes => {
+      this.loading = false;
+      this.dialog.open(ShowtimeListDialogComponent, {
+        data: showtimes,
+        disableClose: true
+      });
+    });
+  }
+
 
   openMovieDialog(movieId: number) {
     const buttonElement = document.activeElement as HTMLElement;

@@ -1,0 +1,31 @@
+<h1 mat-dialog-title>Showtimes</h1>
+<mat-dialog-content>
+
+  <div class="table-container">
+    <table>
+      <tr>
+        <th>Date Start</th>
+        <th>Date End</th>
+        <th>Theater #</th>
+        <th>Actions</th>
+      </tr>
+      @for (showtime of showtimes; track $index) {
+        <tr>
+          <td>{{ showtime.dateStart }}</td>
+          <td>{{ showtime.dateEnd }}</td>
+          <td>{{ showtime.theaterNumber }}</td>
+          <td>
+            <button mat-button>Delete</button>
+          </td>
+        </tr>
+      } @empty {
+        <td colspan="4">There are no items.</td>
+      }
+    </table>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="onConfirm()">
+    Accept
+  </button>
+</mat-dialog-actions>

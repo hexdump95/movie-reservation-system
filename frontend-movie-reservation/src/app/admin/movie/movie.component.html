@@ -18,6 +18,7 @@
         <td>{{ movie.year }}</td>
         <td>{{ movie.genreName }}</td>
         <td>
+          <button mat-button (click)="openShowtimesDialog(movie.id)">Showtimes</button>
           <button mat-button color="primary" (click)="openMovieDialog(movie.id)">View</button>
           <button mat-button color="accent" (click)="openEditMovieDialog(movie.id)">Edit</button>
           <button mat-button color="warn" (click)="openDeleteDialog(movie)">Delete</button>

@@ -1,0 +1,26 @@
+table-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+}
+
+td {
+  border: 1px rgba(200, 200, 200, 0.3) solid;
+}
+
+th {
+  border: 1px rgba(200, 200, 200) solid;
+}
+
+@media screen and (max-width: 768px) {
+  .table-container {
+    overflow-x: scroll;
+  }
+}

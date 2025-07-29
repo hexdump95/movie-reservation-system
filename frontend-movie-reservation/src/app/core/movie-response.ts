@@ -54,3 +54,10 @@ export interface CreateMovieResponse {
   genreName: string;
 }
 
+export interface GetShowtimeResponse {
+  id: number;
+  dateStart: string;
+  dateEnd: string;
+  theaterId: number;
+  theaterNumber: number;
+}

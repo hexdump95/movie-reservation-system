@@ -6,7 +6,7 @@ import {
   CreateMovieRequest,
   CreateMovieResponse,
   GetMovieDetailResponse,
-  GetMovieResponse,
+  GetMovieResponse, GetShowtimeResponse,
   UpdateMovieResponse
 } from "./movie-response";
 
@@ -45,6 +45,10 @@ export class MovieService {
 
   deleteMovie(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
+  }
+
+  getShowtimesByMovieId(movieId: number): Observable<GetShowtimeResponse[]> {
+    return this.http.get<GetShowtimeResponse[]>(`${this.apiUrl}/${movieId}/showtimes`);
   }
 
 }
