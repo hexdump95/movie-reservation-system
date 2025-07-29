@@ -3,6 +3,8 @@ import {MatButton} from "@angular/material/button";
 import {RouterLink} from "@angular/router";
 import {TheaterService} from "../../core/theater.service";
 import {TheaterResponse} from "../../core/theater-response";
+import {MatDialog} from "@angular/material/dialog";
+import {ConfirmDialogComponent} from "../../shared/confirm-dialog/confirm-dialog.component";
 
 @Component({
   selector: 'app-theater',
@@ -17,7 +19,10 @@ import {TheaterResponse} from "../../core/theater-response";
 export class TheaterComponent {
   theaters!: TheaterResponse[];
 
-  constructor(private theaterService: TheaterService) {
+  constructor(
+    private theaterService: TheaterService,
+    private dialog: MatDialog
+  ) {
   }
 
   ngOnInit() {
@@ -27,7 +32,24 @@ export class TheaterComponent {
     );
   }
 
-  createTheater() {
-
+  openDeleteDialog(theater: TheaterResponse) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: `Delete Theater #'${theater.number}'`,
+        message: 'Are you sure you want to delete this theater?'
+      },
+      disableClose: true
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.theaterService.deleteTheater(theater.id)
+          .subscribe(res => {
+            if (res.success) {
+              this.theaters = this.theaters.filter(x => x.id !== theater.id);
+            }
+          });
+      }
+    });
   }
+
 }

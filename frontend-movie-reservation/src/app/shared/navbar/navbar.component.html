@@ -15,12 +15,7 @@
       </li>
       @if (userRoles.includes('ROLE_ADMIN')) {
         <li>
-          <a [routerLink]="['/admin/users']" (click)="closeMenu()">Users</a>
-        </li>
-      }
-      @if (userRoles.includes('ROLE_ADMIN')) {
-        <li>
-          <a [routerLink]="['/admin/reports']" (click)="closeMenu()">Reports</a>
+          <a [routerLink]="['/admin']" (click)="closeMenu()">Admin</a>
         </li>
       }
     }

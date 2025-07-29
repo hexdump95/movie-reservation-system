@@ -25,4 +25,7 @@ export class TheaterService {
     return this.http.post<TheaterResponse>(`${this.apiUrl}`, theater);
   }
 
+  public deleteTheater(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${id}`);
+  }
 }
