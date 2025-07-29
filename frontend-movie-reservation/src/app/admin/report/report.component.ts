@@ -1,13 +1,14 @@
 import {Component} from '@angular/core';
 import {ReportService} from "./report.service";
-import {CurrencyPipe, DatePipe} from "@angular/common";
+import {CurrencyPipe, DatePipe, DecimalPipe} from "@angular/common";
 
 @Component({
   selector: 'app-report',
   standalone: true,
   imports: [
     DatePipe,
-    CurrencyPipe
+    CurrencyPipe,
+    DecimalPipe
   ],
   templateUrl: './report.component.html',
   styleUrl: './report.component.css'

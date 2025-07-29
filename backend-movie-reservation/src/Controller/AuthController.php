@@ -63,7 +63,7 @@ class AuthController extends AbstractController
         ]);
     }
 
-    #[Route('/validateToken', name: 'validateToken', methods: ['POST'])]
+    #[Route('/validate-token', name: 'validate_token', methods: ['POST'])]
     public function validateToken(Request $request): Response
     {
         try {

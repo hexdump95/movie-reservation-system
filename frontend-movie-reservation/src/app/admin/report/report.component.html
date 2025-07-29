@@ -18,7 +18,7 @@
         <td>{{ reportData.canceled_seats }}</td>
         <td>{{ reportData.total_seats }}</td>
         <td>{{ reportData.revenue | currency }}</td>
-        <td>{{ reportData.assist_percent }}</td>
+        <td>{{ reportData.assist_percent | number: '1.2-2' }}</td>
       </tr>
     } @empty {
       <tr>

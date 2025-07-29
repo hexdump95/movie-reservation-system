@@ -29,7 +29,7 @@ class MovieController extends AbstractController
         $this->serializer = $serializer;
     }
 
-    #[Route('/upcoming', name: 'getUpcomingMovies', methods: ['GET'])]
+    #[Route('/upcoming', name: 'get_upcoming_movies', methods: ['GET'])]
     public function getUpcomingMovies(#[MapQueryParameter] int $page = 1): Response
     {
         $responseDto = $this->movieService->getUpcomingMovies($page);
@@ -39,7 +39,7 @@ class MovieController extends AbstractController
         );
     }
 
-    #[Route('/upcoming/{id}', name: 'getMovieDetail', methods: ['GET'])]
+    #[Route('/upcoming/{id}', name: 'get_movie_detail', methods: ['GET'])]
     public function getUpcomingMovieDetail(int $id): Response
     {
         try {
@@ -53,8 +53,8 @@ class MovieController extends AbstractController
         }
     }
 
-    #[Route('', name: 'getMovies', methods: ['GET'])]
-    #[IsGranted("read:movies")]
+    #[Route('', name: 'get_movies', methods: ['GET'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function getMovies(): JsonResponse
     {
         $movies = $this->movieService->getMovies();
@@ -64,8 +64,8 @@ class MovieController extends AbstractController
         );
     }
 
-    #[Route('/{id}', name: 'getMovie', methods: ['GET'])]
-    #[IsGranted("read:movies")]
+    #[Route('/{id}', name: 'get_movie', methods: ['GET'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function getMovie(int $id): JsonResponse
     {
         try {
@@ -79,8 +79,8 @@ class MovieController extends AbstractController
         }
     }
 
-    #[Route('', name: 'createMovie', methods: ['POST'])]
-    #[IsGranted("create:movies")]
+    #[Route('', name: 'create_movie', methods: ['POST'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function createMovie(Request $request): JsonResponse
     {
         $request = $this->serializer->deserialize($request->getContent(), CreateMovieRequest::class, 'json');
@@ -95,8 +95,8 @@ class MovieController extends AbstractController
         }
     }
 
-    #[Route('/{id}', name: 'updateMovie', methods: ['PUT'])]
-    #[IsGranted("update:movies")]
+    #[Route('/{id}', name: 'update_movie', methods: ['PUT'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function updateMovie(int $id, Request $request): JsonResponse
     {
         $movie = $this->serializer->deserialize($request->getContent(), UpdateMovieRequest::class, 'json');
@@ -111,8 +111,8 @@ class MovieController extends AbstractController
         }
     }
 
-    #[Route('/{id}', name: 'deleteMovie', methods: ['DELETE'])]
-    #[IsGranted("delete:movies")]
+    #[Route('/{id}', name: 'delete_movie', methods: ['DELETE'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function deleteMovie(int $id): JsonResponse
     {
         $deleted = $this->movieService->deleteMovie($id);
@@ -122,7 +122,8 @@ class MovieController extends AbstractController
             return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
     }
 
-    #[Route('/{movieId}/showtimes', name: 'getShowtimes', methods: ['GET'])]
+    #[Route('/{movieId}/showtimes', name: 'get_showtimes', methods: ['GET'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function getShowtimes(int $movieId): JsonResponse
     {
         $showtimes = $this->movieService->getShowtimes($movieId);
@@ -132,8 +133,8 @@ class MovieController extends AbstractController
         );
     }
 
-    #[Route('/{movieId}/showtimes', name: 'addShowtime', methods: ['POST'])]
-    #[IsGranted("update:movies")]
+    #[Route('/{movieId}/showtimes', name: 'add_showtime', methods: ['POST'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function addShowtime(int $movieId, Request $request): JsonResponse
     {
         $showtimeRequest = $this->serializer->deserialize($request->getContent(), AddShowtimeRequest::class, 'json');
@@ -148,8 +149,8 @@ class MovieController extends AbstractController
         }
     }
 
-    #[Route('/showtimes/{showtimeId}', name: 'removeShowtime', methods: ['DELETE'])]
-    #[IsGranted("update:movies")]
+    #[Route('/showtimes/{showtimeId}', name: 'remove_showtime', methods: ['DELETE'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function removeShowtime(int $showtimeId): JsonResponse
     {
         $showtimeResponse = $this->movieService->removeShowtime($showtimeId);

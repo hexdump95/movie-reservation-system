@@ -18,9 +18,9 @@
           <a [routerLink]="['/admin/users']" (click)="closeMenu()">Users</a>
         </li>
       }
-      @if (userPermissions.includes('read:reports')) {
+      @if (userRoles.includes('ROLE_ADMIN')) {
         <li>
-          <a [routerLink]="['/reports']" (click)="closeMenu()">Reports</a>
+          <a [routerLink]="['/admin/reports']" (click)="closeMenu()">Reports</a>
         </li>
       }
     }

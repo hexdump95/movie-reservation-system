@@ -26,7 +26,7 @@ class ReportRepository
                 sum(canceled_seats) as canceled_seats,
                 sum(total_seats) as total_seats,
                 case when sum(revenue) is null then 0 else sum(revenue) end as revenue,
-                (sum(occupied_seats) / (case when sum(total_seats) = 0 then 1 else sum(total_seats) end) * 100)::numeric(3, 2) assist_percent
+                (sum(occupied_seats) / (case when sum(total_seats) = 0 then 1 else sum(total_seats) end) * 100) assist_percent
             from (
             select	sh.id,
                 date_trunc('month', sh.date_start)::date date,

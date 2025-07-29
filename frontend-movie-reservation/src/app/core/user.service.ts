@@ -6,13 +6,13 @@ import {Observable} from "rxjs";
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:8080/api/v1/ysers';
+  private apiUrl = 'http://localhost:8080/api/v1/users';
 
   constructor(private http: HttpClient) {
   }
 
   public getUsersAndRoles(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/usersAndRoles`);
+    return this.http.get<any>(`${this.apiUrl}/users-and-roles`);
   }
 
   public updateRoleUser(userId: number, role: string): Observable<any> {

@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/api/v1/genres')]
@@ -21,7 +22,8 @@ class GenreController extends AbstractController
         $this->serializer = $serializer;
     }
 
-    #[Route('', name: 'getGenres', methods: ['GET'])]
+    #[Route('', name: 'get_genres', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function getGenres(): JsonResponse
     {
         $genres = $this->genreService->getGenres();

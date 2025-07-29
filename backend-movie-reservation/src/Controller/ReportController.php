@@ -12,7 +12,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/api/v1/reports')]
-#[IsGranted("read:reports")]
+#[IsGranted("ROLE_ADMIN")]
 class ReportController extends AbstractController
 {
     private ReportService $reportService;
@@ -24,7 +24,7 @@ class ReportController extends AbstractController
         $this->serializer = $serializer;
     }
 
-    #[Route('/revenue', name: 'getRevenue', methods: ['GET'])]
+    #[Route('/revenue', name: 'get_revenue', methods: ['GET'])]
     public function getRevenue(): JsonResponse
     {
         $report = $this->reportService->getRevenueGroupedByShowtime();
@@ -34,7 +34,7 @@ class ReportController extends AbstractController
         );
     }
 
-    #[Route('/revenueByMonth', name: 'getRevenueByMonth', methods: ['GET'])]
+    #[Route('/revenue-by-month', name: 'get_revenue_by_month', methods: ['GET'])]
     public function getRevenueByMonth(#[MapQueryParameter] string $date = ''): JsonResponse
     {
         if ($date == '') {

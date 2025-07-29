@@ -46,7 +46,7 @@ export class AuthService {
   }
 
   validateToken(): Observable<ValidateTokenResponse> {
-    return this.http.post<ValidateTokenResponse>(`${this.apiUrl}/validateToken`, null)
+    return this.http.post<ValidateTokenResponse>(`${this.apiUrl}/validate-token`, null)
       .pipe(tap(res => {
         if (res.isValid) {
           const token = this.getToken();

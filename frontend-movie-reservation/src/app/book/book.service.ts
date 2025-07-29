@@ -23,7 +23,7 @@ export class BookService {
   }
 
   getCentrifugoToken(showtimeId: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/getCentrifugoToken/${showtimeId}`);
+    return this.http.get<any>(`${this.apiUrl}/${showtimeId}/get-centrifugo-token`);
   }
 
   holdSeats(showtimeId: number): Observable<any> {

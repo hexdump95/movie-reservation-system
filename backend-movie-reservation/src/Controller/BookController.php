@@ -27,7 +27,7 @@ class BookController extends AbstractController
         $this->centrifugoService = $centrifugoService;
     }
 
-    #[Route('/showtimes/{id}', name: 'getShowtime')]
+    #[Route('/showtimes/{id}', name: 'get_showtime')]
     public function getShowtimeWithSeats($id): JsonResponse
     {
         try {
@@ -44,7 +44,7 @@ class BookController extends AbstractController
         }
     }
 
-    #[Route('/getCentrifugoToken/{showtimeId}', name: 'getCentrifugoToken', methods: ['GET'])]
+    #[Route('/{showtimeId}/get-centrifugo-token', name: 'get_centrifugo_token', methods: ['GET'])]
     public function getCentrifugoToken(int $showtimeId): JsonResponse
     {
         $userEmail = $this->getUser()->getUserIdentifier();
@@ -57,7 +57,7 @@ class BookController extends AbstractController
             ]);
     }
 
-    #[Route('/showtimes/{showtimeId}/seats/{seatId}', name: 'updateSeatStatus', methods: ['PUT'])]
+    #[Route('/showtimes/{showtimeId}/seats/{seatId}', name: 'update_seat_status', methods: ['PUT'])]
     public function temporaryBookSeat(int $showtimeId, int $seatId): JsonResponse
     {
         try {
@@ -68,7 +68,7 @@ class BookController extends AbstractController
         }
     }
 
-    #[Route('/showtimes/{showtimeId}/hold', name: 'holdSeats', methods: ['POST'])]
+    #[Route('/showtimes/{showtimeId}/hold', name: 'hold_seats', methods: ['POST'])]
     public function holdSeats(int $showtimeId): JsonResponse
     {
         try {
@@ -79,7 +79,7 @@ class BookController extends AbstractController
         }
     }
 
-    #[Route('/showtimes/{showtimeId}/pay', name: 'paySeats', requirements: ['showtimeId' => '\d+'], methods: ['POST'])]
+    #[Route('/showtimes/{showtimeId}/pay', name: 'pay_seats', requirements: ['showtimeId' => '\d+'], methods: ['POST'])]
     public function paySeats(int $showtimeId): JsonResponse
     {
         try {
@@ -93,7 +93,7 @@ class BookController extends AbstractController
         }
     }
 
-    #[Route('', name: 'getReservations', methods: ['GET'])]
+    #[Route('', name: 'get_reservations', methods: ['GET'])]
     public function getReservations(#[MapQueryParameter] int $page = 1): JsonResponse
     {
         $reservations = $this->bookService->getReservations($page);
@@ -103,7 +103,7 @@ class BookController extends AbstractController
         );
     }
 
-    #[Route('/{bookId}', name: 'getReservation', methods: ['GET'])]
+    #[Route('/{bookId}', name: 'get_reservation', methods: ['GET'])]
     public function getReservation(int $bookId): JsonResponse
     {
         $reservations = $this->bookService->getReservationById($bookId);
@@ -113,7 +113,7 @@ class BookController extends AbstractController
         );
     }
 
-    #[Route('/{bookId}/cancel', name: 'cancelReservation', methods: ['POST'])]
+    #[Route('/{bookId}/cancel', name: 'cancel_reservation', methods: ['POST'])]
     public function cancelReservation(int $bookId): JsonResponse
     {
         $reservationCanceled = $this->bookService->cancelReservation($bookId);

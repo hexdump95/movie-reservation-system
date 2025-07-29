@@ -25,7 +25,7 @@ class UserController extends AbstractController
         $this->serializer = $serializer;
     }
 
-    #[Route('/usersAndRoles', name: 'getUsersAndRoles', methods: ['GET'])]
+    #[Route('/users-and-roles', name: 'get_users_and_roles', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function getUsersAndRoles(): JsonResponse
     {
@@ -36,7 +36,7 @@ class UserController extends AbstractController
         );
     }
 
-    #[Route('/users/{userId}/role', name: 'updateRole', methods: ['PUT'])]
+    #[Route('/users/{userId}/role', name: 'update_role', methods: ['PUT'])]
     #[IsGranted('ROLE_ADMIN')]
     public function updateRole(int $userId, Request $request): JsonResponse
     {
@@ -48,7 +48,7 @@ class UserController extends AbstractController
         );
     }
 
-    #[Route('/users/{userId}/roles', name: 'updateRoles', methods: ['PUT'])]
+    #[Route('/users/{userId}/roles', name: 'update_roles', methods: ['PUT'])]
     #[IsGranted('ROLE_ADMIN')]
     public function updateRoles(int $userId, Request $request): JsonResponse
     {

@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/api/v1/theaters')]
@@ -23,7 +24,8 @@ class TheaterController extends AbstractController
         $this->serializer = $serializer;
     }
 
-    #[Route('', name: 'getTheaters', methods: ['GET'])]
+    #[Route('', name: 'get_theaters', methods: ['GET'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function getTheaters(): JsonResponse
     {
         $theaters = $this->theaterService->getTheaters();
@@ -33,7 +35,8 @@ class TheaterController extends AbstractController
         );
     }
 
-    #[Route('/{id}/unavailable-dates', name: 'getUnavailableDates', methods: ['GET'])]
+    #[Route('/{id}/unavailable-dates', name: 'get_unavailable_dates', methods: ['GET'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function getUnavailableDates(int $id): JsonResponse
     {
         $dates = $this->theaterService->getUnavailableDates($id);
@@ -43,7 +46,8 @@ class TheaterController extends AbstractController
         );
     }
 
-    #[Route('', name: 'createTheater', methods: ['POST'])]
+    #[Route('', name: 'create_theater', methods: ['POST'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function createTheater(Request $request): JsonResponse
     {
         $createTheaterRequest = $this->serializer->deserialize($request->getContent(), CreateTheaterRequest::class, 'json');
@@ -56,7 +60,8 @@ class TheaterController extends AbstractController
         }
     }
 
-    #[Route('/{id}', name: 'deleteTheater', methods: ['DELETE'])]
+    #[Route('/{id}', name: 'delete_theater', methods: ['DELETE'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function deleteTheater(int $id): JsonResponse
     {
         $response = $this->theaterService->deleteTheater($id);
