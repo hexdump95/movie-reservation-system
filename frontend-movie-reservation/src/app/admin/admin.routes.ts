@@ -3,6 +3,7 @@ import {AdminComponent} from "./admin.component";
 import {UserComponent} from "./user/user.component";
 import {MovieComponent} from "./movie/movie.component";
 import {ReportComponent} from "./report/report.component";
+import {TheaterComponent} from "./theater/theater.component";
 
 const adminRoutes: Routes = [
   {
@@ -20,6 +21,10 @@ const adminRoutes: Routes = [
   {
     path: 'reports',
     component: ReportComponent,
+  },
+  {
+    path: 'theaters',
+    component: TheaterComponent,
   },
 ];
 

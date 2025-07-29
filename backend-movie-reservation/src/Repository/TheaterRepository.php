@@ -35,8 +35,9 @@ class TheaterRepository extends ServiceEntityRepository
 
     public function existsByNumber(int $number): bool
     {
-        $entity = $this->createQueryBuilder('u')
-            ->where('u.number = :number')
+        $entity = $this->createQueryBuilder('t')
+            ->where('t.number = :number')
+            ->andWhere('t.deletedAt is null')
             ->setParameter('number', $number)
             ->setMaxResults(1)
             ->getQuery()

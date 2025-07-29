@@ -15,11 +15,7 @@
           <td>{{ showtime.dateEnd | date: 'YYYY-MM-dd HH:mm:ss' }}</td>
           <td>{{ showtime.theaterNumber }}</td>
           <td>
-            @if (!showtime.hasBooks) {
-              <button mat-stroked-button color="warn" (click)="openDeleteDialog(showtime)">Delete</button>
-            } @else {
-              <button mat-stroked-button disabled color="warn">Delete</button>
-            }
+              <button mat-stroked-button color="warn" [disabled]="showtime.hasBooks" (click)="openDeleteDialog(showtime)">Delete</button>
           </td>
         </tr>
       } @empty {

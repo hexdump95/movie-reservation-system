@@ -1,0 +1,30 @@
+<h1>Theaters</h1>
+
+<div class="table-container">
+  <table>
+    <tr>
+      <td colspan="3">
+        <button mat-button color="primary" [routerLink]="['./create']">Create Theater</button>
+      </td>
+    </tr>
+    <tr>
+      <th>Id</th>
+      <th>Number</th>
+      <th>Actions</th>
+    </tr>
+    @for (theater of theaters; track $index) {
+      <tr>
+        <td>{{ theater.id }}</td>
+        <td>{{ theater.number }}</td>
+        <td>
+          <button mat-button color="primary">View</button>
+          <button mat-button color="warn">Delete</button>
+        </td>
+      </tr>
+    } @empty {
+      <tr>
+        <td colspan="3">There are no items.</td>
+      </tr>
+    }
+  </table>
+</div>

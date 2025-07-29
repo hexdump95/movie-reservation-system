@@ -2,10 +2,14 @@
   <app-loader></app-loader>
 }
 <h1>Movies</h1>
-<button mat-raised-button color="accent" (click)="openCreateMovieDialog()">Create</button>
 <br><br>
 <div class="table-container">
   <table>
+    <tr>
+      <td colspan="4">
+        <button mat-button color="primary" (click)="openCreateMovieDialog()">Create Movie</button>
+      </td>
+    </tr>
     <tr>
       <th>Title</th>
       <th>Year</th>
