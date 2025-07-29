@@ -196,7 +196,8 @@ class MovieService
                 ->setDateStart($showtime->getDateStart())
                 ->setDateEnd($showtime->getDateEnd())
                 ->setTheaterId($showtime->getTheater()->getId())
-                ->setTheaterNumber($showtime->getTheater()->getNumber());
+                ->setTheaterNumber($showtime->getTheater()->getNumber())
+                ->setHasBooks($showtime->getBooks()->count() > 0);
             $showtimesResponse[] = $showtimeResponse;
         }
         return $showtimesResponse;

@@ -60,4 +60,5 @@ export interface GetShowtimeResponse {
   dateEnd: string;
   theaterId: number;
   theaterNumber: number;
+  hasBooks: boolean;
 }

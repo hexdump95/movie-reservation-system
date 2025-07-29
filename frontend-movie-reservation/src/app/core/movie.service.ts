@@ -51,4 +51,7 @@ export class MovieService {
     return this.http.get<GetShowtimeResponse[]>(`${this.apiUrl}/${movieId}/showtimes`);
   }
 
+  removeShowtime(id: number) {
+    return this.http.delete<any>(`${this.apiUrl}/showtimes/${id}`);
+  }
 }
