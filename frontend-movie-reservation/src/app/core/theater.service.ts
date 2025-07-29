@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {TheaterResponse} from "./theater-response";
+import {CreateTheaterRequest, TheaterResponse} from "./theater-response";
 import {UnavailableDate} from "./movie-response";
 
 @Injectable({
@@ -17,7 +17,12 @@ export class TheaterService {
     return this.http.get<TheaterResponse[]>(`${this.apiUrl}`);
   }
 
-  getUnavailableDates(id: number): Observable<UnavailableDate[]> {
+  public getUnavailableDates(id: number): Observable<UnavailableDate[]> {
     return this.http.get<UnavailableDate[]>(`${this.apiUrl}/${id}/unavailable-dates`);
   }
+
+  public createTheater(theater: CreateTheaterRequest): Observable<any> {
+    return this.http.post<TheaterResponse>(`${this.apiUrl}`, theater);
+  }
+
 }

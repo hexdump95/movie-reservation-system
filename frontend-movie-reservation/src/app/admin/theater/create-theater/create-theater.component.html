@@ -1,0 +1,52 @@
+<h1>Create Theater</h1>
+
+<div style="display: flex">
+  <div>
+    <mat-form-field class="example-full-width">
+      <mat-label>Width</mat-label>
+      <input matInput type="number" min="5" max="26" [(ngModel)]="sizeX" (ngModelChange)="updateGrid($event)">
+    </mat-form-field>
+
+    <br><br>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Height</mat-label>
+      <input matInput type="number" min="5" max="26" [(ngModel)]="sizeY" (ngModelChange)="updateGrid($event)">
+    </mat-form-field>
+
+    <br><br>
+
+    <form [formGroup]="formTheater" (ngSubmit)="onSubmit()">
+      <mat-dialog-content>
+        <mat-form-field>
+          <mat-label>Number</mat-label>
+          <input matInput formControlName="number" type="number" required>
+        </mat-form-field>
+        <br>
+      </mat-dialog-content>
+
+      <button type="submit" mat-button color="primary">Save</button>
+    </form>
+  </div>
+
+  <div class="theater">
+    <div class="screen">SCREEN</div>
+    @for (row of grid; track row; let idRow = $index) {
+      <div class="seat-container">
+        @for (column of row; track column; let idCol = $index) {
+          <div class="seat hover"
+               [style.width.px]="seatLength"
+               [style.height.px]="seatLength"
+               [ngStyle]="{
+              'background-color': column ? '#378f1f' : '#383838',
+              'border': column ? '1px black transparent' : '1px black solid',
+              'box-sizing': 'border-box'
+            }"
+               (click)="selectSeat(idRow, idCol)">
+          </div>
+        }
+      </div>
+    }
+  </div>
+  <br>
+</div>
