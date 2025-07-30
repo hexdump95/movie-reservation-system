@@ -3,9 +3,12 @@
 namespace App\Service;
 
 use App\DTO\CreateTheaterRequest;
+use App\DTO\GetTheaterDetailResponse;
+use App\DTO\GetTheaterDetailSeatResponse;
 use App\DTO\GetTheaterResponse;
 use App\Entity\Seat;
 use App\Entity\Theater;
+use App\Exception\ServiceException;
 use App\Repository\TheaterRepository;
 use DateTimeImmutable;
 
@@ -29,6 +32,25 @@ class TheaterService
             $theatersResponse[] = $theaterResponse;
         }
         return $theatersResponse;
+    }
+
+    public function getTheater(int $id): GetTheaterDetailResponse
+    {
+        $theater = $this->theaterRepository->findById($id);
+        if (!$theater) {
+            throw new ServiceException(["Theater with id $id not found"]);
+        }
+
+        $seatsResponse = [];
+        foreach ($theater->getSeats() as $seat) {
+            $seatResponse = (new GetTheaterDetailSeatResponse())
+                ->setCode($seat->getCode());
+            $seatsResponse[$seat->getRow() - 1][] = $seatResponse;
+        }
+
+        return (new GetTheaterDetailResponse())
+            ->setNumber($theater->getNumber())
+            ->setSeats($seatsResponse);
     }
 
     public function getUnavailableDates(int $id): array

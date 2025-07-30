@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\DTO\CreateTheaterRequest;
+use App\Exception\HttpServiceException;
+use App\Exception\ServiceException;
 use App\Service\TheaterService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -33,6 +35,21 @@ class TheaterController extends AbstractController
             $this->serializer->normalize($theaters),
             Response::HTTP_OK
         );
+    }
+
+    #[Route('/{id}', name: 'get_theater', methods: ['GET'])]
+    #[IsGranted("ROLE_ADMIN")]
+    public function getTheater(int $id): JsonResponse
+    {
+        try {
+            $theater = $this->theaterService->getTheater($id);
+            return new JsonResponse(
+                $this->serializer->normalize($theater),
+                Response::HTTP_OK
+            );
+        } catch (ServiceException $exception) {
+            throw new HttpServiceException($exception->getCode(), $exception->getMessage(), $exception->getDetails());
+        }
     }
 
     #[Route('/{id}/unavailable-dates', name: 'get_unavailable_dates', methods: ['GET'])]
