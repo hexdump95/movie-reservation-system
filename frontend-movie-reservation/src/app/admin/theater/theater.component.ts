@@ -5,6 +5,7 @@ import {TheaterService} from "../../core/theater.service";
 import {TheaterResponse} from "../../core/theater-response";
 import {MatDialog} from "@angular/material/dialog";
 import {ConfirmDialogComponent} from "../../shared/confirm-dialog/confirm-dialog.component";
+import {TheaterDetailDialogComponent} from "./theater-detail-dialog/theater-detail-dialog.component";
 
 @Component({
   selector: 'app-theater',
@@ -49,6 +50,13 @@ export class TheaterComponent {
             }
           });
       }
+    });
+  }
+
+  openDetailDialog(theaterId: number) {
+    const dialogRef = this.dialog.open(TheaterDetailDialogComponent, {
+      data: theaterId,
+      disableClose: true
     });
   }
 

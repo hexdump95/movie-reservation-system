@@ -1,0 +1,26 @@
+@if (!theater) {
+  <app-loader></app-loader>
+} @else {
+  <h1 mat-dialog-title>Theater #{{ theater.number }}</h1>
+  <mat-dialog-content>
+
+    <div class="theater">
+      <div class="screen">SCREEN</div>
+      @for (row of theater.seats; track row) {
+        <div class="seat-container">
+          @for (seat of row; track $index) {
+            <div class="seat"
+                 [style.width.px]="seatLength"
+                 [style.height.px]="seatLength"
+                 [ngStyle]="{'background-color': seat ? '#378f1f' : 'unset'}">
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button type="button" mat-button (click)="onAccept()">Accept</button>
+  </mat-dialog-actions>
+}

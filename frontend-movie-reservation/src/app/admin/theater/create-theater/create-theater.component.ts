@@ -58,14 +58,14 @@ export class CreateTheaterComponent {
   }
 
   onSubmit() {
-    console.log(this.grid);
     const createTheaterRequest: CreateTheaterRequest = {
       number: this.formTheater.value?.number,
       seatsGrid: this.grid,
     };
     this.theaterService.createTheater(createTheaterRequest)
       .subscribe(_ => {
-        void this.router.navigate(['../']);
+        void this.router.navigate(['/admin/theaters']);
       });
   }
+
 }

@@ -17,7 +17,7 @@
         <td>{{ theater.id }}</td>
         <td>{{ theater.number }}</td>
         <td>
-          <button mat-button color="primary">View</button>
+          <button mat-button color="primary" (click)="openDetailDialog(theater.id)">View</button>
           <button mat-button color="warn" (click)="openDeleteDialog(theater)">Delete</button>
         </td>
       </tr>

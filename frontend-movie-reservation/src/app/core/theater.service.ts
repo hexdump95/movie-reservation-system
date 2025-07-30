@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {CreateTheaterRequest, TheaterResponse} from "./theater-response";
+import {CreateTheaterRequest, TheaterDetailResponse, TheaterResponse} from "./theater-response";
 import {UnavailableDate} from "./movie-response";
 
 @Injectable({
@@ -13,19 +13,24 @@ export class TheaterService {
   constructor(private http: HttpClient) {
   }
 
-  public getTheaters(): Observable<TheaterResponse[]> {
+  getTheaters(): Observable<TheaterResponse[]> {
     return this.http.get<TheaterResponse[]>(`${this.apiUrl}`);
   }
 
-  public getUnavailableDates(id: number): Observable<UnavailableDate[]> {
+  getTheater(id: number): Observable<TheaterDetailResponse> {
+    return this.http.get<TheaterDetailResponse>(`${this.apiUrl}/${id}`);
+  }
+
+  getUnavailableDates(id: number): Observable<UnavailableDate[]> {
     return this.http.get<UnavailableDate[]>(`${this.apiUrl}/${id}/unavailable-dates`);
   }
 
-  public createTheater(theater: CreateTheaterRequest): Observable<any> {
+  createTheater(theater: CreateTheaterRequest): Observable<any> {
     return this.http.post<TheaterResponse>(`${this.apiUrl}`, theater);
   }
 
-  public deleteTheater(id: number): Observable<any> {
+  deleteTheater(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
+
 }
