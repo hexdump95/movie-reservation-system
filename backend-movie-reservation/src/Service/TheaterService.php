@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\DTO\CreateTheaterRequest;
 use App\DTO\GetTheaterDetailResponse;
-use App\DTO\GetTheaterDetailSeatResponse;
 use App\DTO\GetTheaterResponse;
 use App\Entity\Seat;
 use App\Entity\Theater;
@@ -43,8 +42,7 @@ class TheaterService
 
         $seatsResponse = [];
         foreach ($theater->getSeats() as $seat) {
-            $seatResponse = (new GetTheaterDetailSeatResponse())
-                ->setCode($seat->getCode());
+            $seatResponse = $seat->getCode() !== '';
             $seatsResponse[$seat->getRow() - 1][] = $seatResponse;
         }
 
