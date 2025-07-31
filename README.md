@@ -97,11 +97,11 @@ cd ./backend-movie-reservation
 ng serve
 ```
 
-The API will be running on port 8080
-The frontend will be running on port 4200
-Centrifugo will be running on port 8000
-Valkey will be running on port 6379
-PostgreSQL will be running on port 5432
+- The API will be running on port 8080
+- The frontend will be running on port 4200
+- Centrifugo will be running on port 8000
+- Valkey will be running on port 6379
+- PostgreSQL will be running on port 5432
 
 ### Overview
 
