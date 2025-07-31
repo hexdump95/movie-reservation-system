@@ -96,3 +96,21 @@ backend-movie-reservation/bin/rr serve -c .rr.dev.yaml
 cd ./backend-movie-reservation
 ng serve
 ```
+
+The API will be running on port 8080
+The frontend will be running on port 4200
+Centrifugo will be running on port 8000
+Valkey will be running on port 6379
+PostgreSQL will be running on port 5432
+
+### Overview
+
+![Theaters](docs/create-theater.png)
+You should create a Theater before adding a Showtime to a Movie.
+
+![Showtimes](docs/book-showtime.png)
+When you are on the seat selection page, a WebSocket connection is established, so if someone is booking a seat, it will reduce the chance of booking the same seat.
+
+![ERD](docs/erd.png)
+
+![Services](docs/services.png)
